@@ -74,11 +74,22 @@ exports.buildApp = async (dir, platform, args) => {
 	}
 }
 
-exports.startClient = async () => {
+exports.startClient = async (capabilities) => {
 	const appium = require('./lib/appium.js');
 
 	try {
-		await appium.startClient();
+		await appium.startClient(capabilities);
+	} catch (err) {
+		output.error(err);
+		process.exit();
+	}
+}
+
+exports.stopClient = async () => {
+	const appium = require('./lib/appium.js');
+
+	try {
+		await appium.stopClient();
 	} catch (err) {
 		output.error(err);
 		process.exit();
