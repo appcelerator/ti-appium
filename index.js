@@ -15,7 +15,7 @@ exports.appcSetup = async (conf) => {
 		await appc.installCLI(conf);
 
 		sdk = await appc.installSDK(conf);
-	} catch(err) {
+	} catch (err) {
 		output.error(err);
 		process.exit();
 	}
@@ -26,7 +26,7 @@ exports.startAppium = async (hostname, portNumber) => {
 
 	try {
 		await appium.runAppium(hostname, portNumber);
-	} catch(err) {
+	} catch (err) {
 		output.error(err);
 		process.exit();
 	}
@@ -37,7 +37,7 @@ exports.stopAppium = async () => {
 
 	try {
 		await appium.quitServ();
-	} catch(err) {
+	} catch (err) {
 		output.error(err);
 		process.exit();
 	}
@@ -57,7 +57,7 @@ exports.test = async (dir) => {
 		if(tests.length === 0) throw Error('No Tests Found!');
 
 		await mocha.run(tests);
-	} catch(err) {
+	} catch (err) {
 		output.error(err);
 		process.exit();
 	}
@@ -67,8 +67,8 @@ exports.buildApp = async (dir, platform, args) => {
 	const appc = require('./lib/appcelerator.js');
 
 	try {
-		await appc.build(dir, platform, args);
-	} catch(err) {
+		return await appc.build(dir, platform, args);
+	} catch (err) {
 		output.error(err);
 		process.exit();
 	}
@@ -79,7 +79,7 @@ exports.startClient = async (capabilities) => {
 
 	try {
 		await appium.startClient(capabilities);
-	} catch(err) {
+	} catch (err) {
 		output.error(err);
 		process.exit();
 	}
@@ -90,7 +90,7 @@ exports.stopClient = async () => {
 
 	try {
 		await appium.stopClient();
-	} catch(err) {
+	} catch (err) {
 		output.error(err);
 		process.exit();
 	}
