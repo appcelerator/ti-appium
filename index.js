@@ -5,16 +5,12 @@ const output = require('./lib/output.js');
 exports.appcSetup = async (conf) => {
 	const appc = require('./lib/appcelerator.js');
 
-	let
-		sdk,
-		appiumServer;
-
 	try {
 		await appc.login(conf, 'production');
 
 		await appc.installCLI(conf);
 
-		sdk = await appc.installSDK(conf);
+		await appc.installSDK(conf);
 	} catch (err) {
 		output.error(err);
 		process.exit();
@@ -90,6 +86,17 @@ exports.stopClient = async () => {
 
 	try {
 		await appium.stopClient();
+	} catch (err) {
+		output.error(err);
+		process.exit();
+	}
+}
+
+exports.appcRun = async (args) => {
+	const appc = require('./lib/appcelerator.js');
+
+	try {
+		await appc.runner(args);
 	} catch (err) {
 		output.error(err);
 		process.exit();
