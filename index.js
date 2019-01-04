@@ -103,11 +103,11 @@ exports.appcRun = async (args) => {
 	}
 }
 
-exports.createAppPath = async (dir, platform, appName) => {
-	const appc = require('./lib/appcelerator/js');
+exports.createAppPath = (dir, platform, appName) => {
+	const appc = require('./lib/appcelerator.js');
 
 	try {
-		await appc.createAppPath(dir, platform, appName);
+		return appc.createAppPath(dir, platform, appName);
 	} catch (err) {
 		output.error(err);
 		process.exit();
