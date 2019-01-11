@@ -2,6 +2,15 @@
 
 const output = require('./lib/output.js');
 
+exports.info = output.info;
+exports.error = output.error;
+
+exports.appcRun = require('./lib/appcelerator.js').runner;
+
+exports.buildApp = require('./lib/appcelerator.js').build;
+
+exports.createAppPath = require('./lib/appcelerator.js').createAppPath;
+
 exports.appcSetup = async (conf) => {
 	const appc = require('./lib/appcelerator.js');
 
@@ -12,32 +21,17 @@ exports.appcSetup = async (conf) => {
 
 		await appc.installSDK(conf);
 	} catch (err) {
-		output.error(err);
-		process.exit();
+		throw err;
 	}
 }
 
-exports.startAppium = async (hostname, portNumber) => {
-	const appium = require('./lib/appium.js');
+exports.stopAppium = require('./lib/appium.js').quitServ;
 
-	try {
-		await appium.runAppium(hostname, portNumber);
-	} catch (err) {
-		output.error(err);
-		process.exit();
-	}
-}
+exports.stopClient = require('./lib/appium.js').stopClient;
 
-exports.stopAppium = async () => {
-	const appium = require('./lib/appium.js');
+exports.startAppium = require('./lib/appium.js').runAppium;
 
-	try {
-		await appium.quitServ();
-	} catch (err) {
-		output.error(err);
-		process.exit();
-	}
-}
+exports.startClient = require('./lib/appium.js').startClient;
 
 exports.test = async (dir) => {
 	const
@@ -54,62 +48,6 @@ exports.test = async (dir) => {
 
 		await mocha.run(tests);
 	} catch (err) {
-		output.error(err);
-		process.exit();
-	}
-}
-
-exports.buildApp = async (dir, platform, args) => {
-	const appc = require('./lib/appcelerator.js');
-
-	try {
-		return await appc.build(dir, platform, args);
-	} catch (err) {
-		output.error(err);
-		process.exit();
-	}
-}
-
-exports.startClient = async (capabilities) => {
-	const appium = require('./lib/appium.js');
-
-	try {
-		await appium.startClient(capabilities);
-	} catch (err) {
-		output.error(err);
-		process.exit();
-	}
-}
-
-exports.stopClient = async () => {
-	const appium = require('./lib/appium.js');
-
-	try {
-		await appium.stopClient();
-	} catch (err) {
-		output.error(err);
-		process.exit();
-	}
-}
-
-exports.appcRun = async (args) => {
-	const appc = require('./lib/appcelerator.js');
-
-	try {
-		await appc.runner(args);
-	} catch (err) {
-		output.error(err);
-		process.exit();
-	}
-}
-
-exports.createAppPath = (dir, platform, appName) => {
-	const appc = require('./lib/appcelerator.js');
-
-	try {
-		return appc.createAppPath(dir, platform, appName);
-	} catch (err) {
-		output.error(err);
-		process.exit();
+		throw err;
 	}
 }
