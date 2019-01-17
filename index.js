@@ -33,7 +33,7 @@ exports.startAppium = require('./lib/appium.js').runAppium;
 
 exports.startClient = require('./lib/appium.js').startClient;
 
-exports.test = async (dir) => {
+exports.test = async (dir, modRoot) => {
 	const
 		path = require('path'),
 		mocha = require('./lib/mocha.js');
@@ -46,8 +46,14 @@ exports.test = async (dir) => {
 		// Break here if no tests are defined
 		if(tests.length === 0) throw Error('No Tests Found!');
 
-		await mocha.run(tests);
+		await mocha.run(tests, modRoot);
 	} catch (err) {
 		throw err;
 	}
 }
+
+exports.bootEmulator = require('./lib/device.js').launchEmu;
+
+exports.killEmulator = require('./lib/device.js').killEmu;
+
+exports.killSimulator = require('./lib/device.js').killSim;
