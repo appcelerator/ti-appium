@@ -1,19 +1,9 @@
 # ti-appium
-The beginning of an npm module to tie together Titanium and Appium functionality. Now that Appium usage is expanding, we're currently maintaining similar source code across different test suites, some fixes are only implemented in certain suites due to lack of maintenance. Once completed this module will be used as a backbone across all our tests.
+An npm package designed to be a backbone for Appium based Titanium testing. Designed for functionality around building Appcelerator applications and CLI management such as SDK and CLI versions, configuring Mocha test files, starting an Appium server and importing custom WebDriver commands, and managing test devices at a basic level.
 
-Currently under construction 🏗
+Source code can be found on [GitHub](https://github.com/appcelerator/ti-appium), please submit issues here.
 
-## Usage
-As this isn't currently published to npm you'll need to do the following steps.
-
-- `git clone git@github.com:appcelerator/ti-appium.git`
-- `cd ti-appium`
-- `npm install`
-- `npm link`
-
-Once this has been done, you can go to the location you want to use the module, and run `npm link ti-appium`.
-
-## Current Appium Efforts
+## Current Appcelerator Appium Efforts
 - [Phoenix](https://github.com/appcelerator/phoenix)
 - [Yeti](https://github.com/appcelerator/yeti)
 - [KitchenSink v2](https://github.com/appcelerator/qe-kitchensink)

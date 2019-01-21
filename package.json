@@ -1,15 +1,13 @@
 {
   "name": "ti-appium",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "An Appium wrapper to test Titanium applications",
   "main": "index.js",
-  "scripts": {
-    "test": "echo 'Under Construction 🏗'"
-  },
   "keywords": [
     "Appium",
     "Titanium",
-    "Automation"
+    "Automation",
+    "Appcelerator"
   ],
   "author": "SamJHaig",
   "license": "ISC",
