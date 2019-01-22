@@ -23,7 +23,7 @@ exports.appcSetup = async (conf) => {
 	} catch (err) {
 		throw err;
 	}
-}
+};
 
 exports.stopAppium = require('./lib/appium.js').quitServ;
 
@@ -44,13 +44,15 @@ exports.test = async (dir, modRoot) => {
 		let tests = await mocha.collectTests(dir);
 
 		// Break here if no tests are defined
-		if(tests.length === 0) throw Error('No Tests Found!');
+		if (tests.length === 0) {
+			throw Error('No Tests Found!');
+		}
 
 		await mocha.run(tests, modRoot);
 	} catch (err) {
 		throw err;
 	}
-}
+};
 
 exports.bootEmulator = require('./lib/device.js').launchEmu;
 
