@@ -1,7 +1,11 @@
 {
   "name": "ti-appium",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "An Appium wrapper to test Titanium applications",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appcelerator/ti-appium"
+  },
   "main": "index.js",
   "scripts": {
     "lint": "eslint --config axway/env-node ."
@@ -15,10 +19,9 @@
   "author": "Sajoha",
   "license": "ISC",
   "dependencies": {
+    "appium": "^1.10.1",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
-    "eslint": "^4.19.1",
-    "eslint-config-axway": "^2.0.14",
     "fs-extra": "^2.0.0",
     "mocha": "^5.2.0",
     "mocha-filter": "^1.3.0",
@@ -29,5 +32,9 @@
     "ps-list": "^6.0.0",
     "tiapp.xml": "^0.2.2",
     "wd": "^1.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-axway": "^2.0.14"
   }
 }
