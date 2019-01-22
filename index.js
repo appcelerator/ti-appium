@@ -1,18 +1,18 @@
 'use strict';
 
-const output = require('./lib/output.js');
+const output = require('./src/output.js');
 
 exports.info = output.info;
 exports.error = output.error;
 
-exports.appcRun = require('./lib/appcelerator.js').runner;
+exports.appcRun = require('./src/appcelerator.js').runner;
 
-exports.buildApp = require('./lib/appcelerator.js').build;
+exports.buildApp = require('./src/appcelerator.js').build;
 
-exports.createAppPath = require('./lib/appcelerator.js').createAppPath;
+exports.createAppPath = require('./src/appcelerator.js').createAppPath;
 
 exports.appcSetup = async (conf) => {
-	const appc = require('./lib/appcelerator.js');
+	const appc = require('./src/appcelerator.js');
 
 	try {
 		await appc.login(conf, 'production');
@@ -25,18 +25,18 @@ exports.appcSetup = async (conf) => {
 	}
 };
 
-exports.stopAppium = require('./lib/appium.js').quitServ;
+exports.stopAppium = require('./src/appium.js').quitServ;
 
-exports.stopClient = require('./lib/appium.js').stopClient;
+exports.stopClient = require('./src/appium.js').stopClient;
 
-exports.startAppium = require('./lib/appium.js').runAppium;
+exports.startAppium = require('./src/appium.js').runAppium;
 
-exports.startClient = require('./lib/appium.js').startClient;
+exports.startClient = require('./src/appium.js').startClient;
 
 exports.test = async (dir, modRoot) => {
 	const
 		path = require('path'),
-		mocha = require('./lib/mocha.js');
+		mocha = require('./src/mocha.js');
 
 	try {
 		output.banner(`Running test directory ${path.basename(dir)}`);
@@ -54,8 +54,8 @@ exports.test = async (dir, modRoot) => {
 	}
 };
 
-exports.bootEmulator = require('./lib/device.js').launchEmu;
+exports.bootEmulator = require('./src/device.js').launchEmu;
 
-exports.killEmulator = require('./lib/device.js').killEmu;
+exports.killEmulator = require('./src/device.js').killEmu;
 
-exports.killSimulator = require('./lib/device.js').killSim;
+exports.killSimulator = require('./src/device.js').killSim;
