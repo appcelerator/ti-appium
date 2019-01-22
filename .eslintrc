@@ -1,0 +1,12 @@
+{
+    "extends": ["axway/env-node"],
+    "rules": {
+      "security/detect-non-literal-regexp":"off",
+      "security/detect-child-process":"off",
+      "security/detect-new-buffer":"off",
+      "spaced-comment":"off",
+      "valid-jsdoc":"off",
+      "max-len":"off",
+      "linebreak-style": 0
+    }
+}
