@@ -9,7 +9,7 @@
     "Automation",
     "Appcelerator"
   ],
-  "author": "SamJHaig",
+  "author": "Sajoha",
   "license": "ISC",
   "dependencies": {
     "appium": "^1.9.0",
