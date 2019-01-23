@@ -1,7 +1,9 @@
 # ti-appium
-An npm package designed to be a backbone for Appium based Titanium testing. Designed for functionality around building Appcelerator applications and CLI management such as SDK and CLI versions, configuring Mocha test files, starting an Appium server and importing custom WebDriver commands, and managing test devices at a basic level.
+An npm package created to be a backbone for Appium based Titanium testing. Designed for functionality around building Appcelerator applications and CLI management such as SDK and CLI versions, configuring Mocha test files, starting an Appium server and importing custom WebDriver commands, and managing test devices at a basic level.
 
-Source code can be found on [GitHub](https://github.com/appcelerator/ti-appium), please submit issues here.
+This is still pretty early on in development, features are being worked on as issues arise in the suite creation process. There is also a high chance of functionality bugs, so please don't be afraid to submit issues in [GitHub](https://github.com/appcelerator/ti-appium/issues)! 
+
+Proper documentation to come in the future...
 
 ## Current Appcelerator Appium Efforts
 - [Phoenix](https://github.com/appcelerator/phoenix)
