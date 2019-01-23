@@ -24,11 +24,7 @@ class WebDriver_Helper {
 			 * @param {String} modRoot - The path to the root of the project being tested
 			 * @param {Object} options - The optional paramteres for the function
 			 ****************************************************************************/
-			webdriver.addPromiseMethod('screenshotTest', async (file, modRoot, options) => {
-				const
-					thresh = options.thresh || 0.20,
-					overwrite = options.overwrite || false;
-
+			webdriver.addPromiseMethod('screenshotTest', async (file, modRoot, { thresh = 0.20, overwrite = false } = {}) => {
 				const
 					capabilities = await global.driver.sessionCapabilities(),
 					platform = capabilities.platformName;

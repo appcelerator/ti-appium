@@ -16,7 +16,7 @@ class Appium_Helper {
 	 * Starts a WD session on the device, using the given capability requirements
 	 * as Appium configuration.
 	 *
-	 * @param {Object} capabilities - Desired options for Appium to run with
+	 * @param {Object} capabilities - Desired capabilities for Appium to run with
 	 ****************************************************************************/
 	static startClient(capabilities) {
 		return new Promise(async (resolve, reject) => {
@@ -103,22 +103,16 @@ class Appium_Helper {
 	 * desktop session.
 	 *
 	 * @param {String} modRoot - The path to the root of the project being tested
-	 * @param {String} hostname - The address to launch the Appium server on
-	 * @param {int} portNumber - The port to open for the Appium server
+	 * @param {Object} options - Object containing hostname and port for server
 	 ****************************************************************************/
-	static runAppium(modRoot, hostname, portNumber) {
-
-		const
-			host = hostname || 'localhost',
-			port = portNumber || 4723;
-
-		output.step(`Starting Appium Server On '${host}:${port}'`);
+	static runAppium(modRoot, { hostname = 'localhost', port = 4723 } = {}) {
+		output.step(`Starting Appium Server On '${hostname}:${port}'`);
 
 		return new Promise((resolve, reject) => {
 			// We only want to allow starting a server on the local machine
 			const validAddresses = [ 'localhost', '0.0.0.0', '127.0.0.1' ];
 
-			if (validAddresses.includes(host)) {
+			if (validAddresses.includes(hostname)) {
 				let exe;
 
 				switch (process.platform) {
@@ -133,7 +127,7 @@ class Appium_Helper {
 
 				let
 					appiumExe = path.join(modRoot, 'node_modules', '.bin', exe),
-					flags = [ '--log-no-colors', '-a', host, '-p', port, '--show-ios-log' ];
+					flags = [ '--log-no-colors', '-a', hostname, '-p', port, '--show-ios-log' ];
 
 				const appiumServer = spawn(appiumExe, flags, {
 					shell: true
@@ -143,7 +137,7 @@ class Appium_Helper {
 					const line = data.toString().trim();
 
 					const
-						regStr = `started on ${host}\\:${port}$`,
+						regStr = `started on ${hostname}\\:${port}$`,
 						isRunning = new RegExp(regStr, 'g').test(line);
 
 					if (isRunning) {
@@ -196,7 +190,7 @@ class Appium_Helper {
 async function getAppium() {
 	const
 		list = await ps(),
-		appiumPath = path.join('ti-appium', 'node_modules', '.bin', 'appium'),
+		appiumPath = path.join('node_modules', '.bin', 'appium'),
 		processInfo = list.find(x => x.cmd.includes(appiumPath));
 
 	return processInfo;
