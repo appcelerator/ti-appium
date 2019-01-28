@@ -78,7 +78,7 @@ class Mocha_Helper {
 			let mocha = new Mocha({
 				fullTrace: false,
 				useColors: true,
-				timeout: 120000, // Maybe this should be configurable
+				timeout: 180000, // Maybe this should be configurable
 				slow: 80000,
 				reporter: 'mocha-jenkins-reporter',
 				reporterOptions: {

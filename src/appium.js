@@ -61,7 +61,7 @@ class Appium_Helper {
 			global.webdriver = wd;
 
 			// Make sure to include the custom commands defined in the WebDriver Helper
-			await webdriver.loadDriverCommands(driver, wd);
+			webdriver.loadDriverCommands(driver, wd);
 
 			driver.init(capabilities, err => {
 				(err) ? reject(err) : resolve();
