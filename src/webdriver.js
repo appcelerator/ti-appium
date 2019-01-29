@@ -15,6 +15,731 @@ class WebDriver_Helper {
 	static loadDriverCommands(driver, webdriver) {
 		output.debug('Loading in custom WebDriver commands');
 
+		/*************************************************************************
+		 * Return the OS of the current device, using the session.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('getPlatform', () => {
+			return driver
+				.sessionCapabilities()
+				.then(capabilities => {
+					return capabilities.platformName;
+				});
+		});
+
+		/*************************************************************************
+		 * Used for hiding the keyboard on Android devices, as it sometimes
+		 * focuses on new text fields.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('androidHideKeyboard', () => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					if (platform === 'Android') {
+						return driver.hideKeyboard();
+					} else {
+						return true;
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Get the text from the passed UI elements.
+		 ************************************************************************/
+		webdriver.addElementPromiseMethod('getText', () => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return this.getAttribute('value');
+
+						case 'Android':
+							return this.getAttribute('text');
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Accept the alert on the display to clear it away.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('alertAccept', () => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver
+								.elementText('OK')
+								.click()
+								.sleep(500);
+
+						case 'Android':
+							return driver
+								.elementsText('OK')
+								.then(elements => {
+									if (elements.length === 0) {
+										return driver
+											.back()
+											.sleep(500);
+									} else {
+										return driver
+											.elementText('OK')
+											.click()
+											.sleep(500);
+									}
+								});
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Equivelant to hitting the return key, do so for the required platform.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('enter', term => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver
+								.elementText(term)
+								.click();
+
+						case 'Android':
+							return driver.pressKeycode(66); // Enter key
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Use the backspace key on the keyboard for the required platform.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('backspace', () => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver
+								.elementByXPath('//XCUIElementTypeKey[@name="delete"]')
+								.click();
+
+						case 'Android':
+							return driver.pressKeycode(67); // Backspace key
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Return an element, by its platform specific class name.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('elementClassName', elementType => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					return driver.elementByClassName(getElement(elementType, platform));
+				});
+		});
+
+		/*************************************************************************
+		 * Count the number of elements, by its platform specific class name.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('elementsClassName', elementType => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					return driver.elementsByClassName(getElement(elementType, platform));
+				});
+		});
+
+		/*************************************************************************
+		 * Return an element, by its platform specific class name, but allow wait.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('waitForElementClassName', (elementType, time) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					return driver.waitForElementByClassName(getElement(elementType, platform), webdriver.asserters.isDisplayed, time);
+				});
+		});
+
+		/*************************************************************************
+		 * Return an element, by its platform specific XPath.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('elementXPath', (elementType, id, position) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.elementByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`);
+
+						case 'Android':
+							return driver.elementByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Count the number of elements, by its platform specific XPath.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('elementsXPath', (elementType, id, position) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.elementsByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`);
+
+						case 'Android':
+							return driver.elementsByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Return an element, by its platform specific XPath, but allow wait.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('waitForElementXPath', (elementType, id, position, time) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.waitForElementByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`, webdriver.asserters.isDisplayed, time);
+
+						case 'Android':
+							return driver.waitForElementByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`, webdriver.asserters.isDisplayed, time);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Return an element, by its ID.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('elementId', (element) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.elementById(element);
+
+						case 'Android':
+							return driver.elementById(`${element}.`);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Count the number of elements, by its ID.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('elementsId', (element) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.elementsById(element);
+
+						case 'Android':
+							return driver.elementsById(`${element}.`);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Return an element, by its ID, but allow wait.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('waitForElementId', (elementType, time) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.waitForElementById(elementType, webdriver.asserters.isDisplayed, time);
+
+						case 'Android':
+							return driver.waitForElementById(`${elementType}.`, webdriver.asserters.isDisplayed, time);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Return an element, by its text content.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('elementText', text => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.elementById(text);
+
+						case 'Android':
+							return driver.elementByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Count the number of elements, by its text content.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('elementsText', text => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.elementsById(text);
+
+						case 'Android':
+							return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Return an element, by its text content, but allow wait.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('waitForElementText', (text, time) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					switch (platform) {
+						case 'iOS':
+							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
+
+						case 'Android':
+							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Get the dimensions, and coordinates of an element, then return them.
+		 ************************************************************************/
+		webdriver.addElementPromiseMethod('getBounds', function () {
+			return this
+				.getSize()
+				.then(size => {
+					return this
+						.getLocation()
+						.then(loc => {
+							const bounds = {
+								x: loc.x,
+								y: loc.y,
+								width: size.width,
+								height: size.height
+							};
+
+							return bounds;
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Longpress on the passed element.
+		 ************************************************************************/
+		webdriver.addElementPromiseMethod('longpress', function () {
+			return this
+				.getSize()
+				.then(size => {
+					return this
+						.getLocation()
+						.then(loc => {
+							const action = new webdriver.TouchAction()
+								.press({
+									x: (loc.x + (size.width / 2)),
+									y: (loc.y + (size.height / 2))
+								})
+								.wait(3000)
+								.release();
+
+							return driver.performTouchAction(action);
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Double click on the passed element.
+		 ************************************************************************/
+		webdriver.addElementPromiseMethod('doubleClick', function () {
+			return this
+				.getSize()
+				.then(size => {
+					return this
+						.getLocation()
+						.then(loc => {
+							const action = new webdriver.TouchAction()
+								.press({
+									x: (loc.x + (size.width / 2)),
+									y: (loc.y + (size.height / 2))
+								})
+								.release();
+
+							return driver
+								.performTouchAction(action)
+								.performTouchAction(action);
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Scroll up on the entire height of the passed element.
+		 ************************************************************************/
+		webdriver.addElementPromiseMethod('scrollUp', function () {
+			return this
+				.getSize()
+				.then(size => {
+					return this
+						.getLocation()
+						.then(loc => {
+							return driver
+								.getPlatform()
+								.then(platform => {
+									switch (platform) {
+										case 'iOS':
+											const iOSAction = new webdriver.TouchAction()
+												.press({
+													x: (loc.x + (size.width / 2)),
+													y: (loc.y + 20)
+												})
+												.moveTo({
+													x: 0,
+													y: (size.height * 1.5)
+												})
+												.release();
+
+											return driver.performTouchAction(iOSAction);
+
+										case 'Android':
+											const AndroidAction = new webdriver.TouchAction()
+												.press({
+													x: (loc.x + (size.width / 2)),
+													y: (loc.y + 20)
+												})
+												.moveTo({
+													x: 0,
+													y: (size.height - 21)
+												})
+												.release();
+
+											return driver.performTouchAction(AndroidAction);
+									}
+								});
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Scroll down on the entire height of the passed element.
+		 ************************************************************************/
+		webdriver.addElementPromiseMethod('scrollDown', function () {
+			return this
+				.getSize()
+				.then(size => {
+					return this
+						.getLocation()
+						.then(loc => {
+							return driver
+								.getPlatform()
+								.then(platform => {
+									switch (platform) {
+										case 'iOS':
+											const iOSAction = new webdriver.TouchAction()
+												.press({
+													x: (loc.x + (size.width / 2)),
+													y: (loc.y + (size.height - 20))
+												})
+												.moveTo({
+													x: 0,
+													y: -(size.height * 1.5)
+												})
+												.release();
+
+											return driver.performTouchAction(iOSAction);
+
+										case 'Android':
+											const AndroidAction = new webdriver.TouchAction()
+												.press({
+													x: (loc.x + (size.width / 2)),
+													y: (loc.y + (size.height - 20))
+												})
+												.moveTo({
+													x: 0,
+													y: -(size.height - 21)
+												})
+												.release();
+
+											return driver.performTouchAction(AndroidAction);
+									}
+								});
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Swipe right across the entire width of the passed element.
+		 ************************************************************************/
+		webdriver.addElementPromiseMethod('swipeRight', function () {
+			return this
+				.getSize()
+				.then(size => {
+					return this
+						.getLocation()
+						.then(loc => {
+							return driver
+								.getPlatform()
+								.then(platform => {
+									switch (platform) {
+										case 'iOS':
+											const iOSAction = new webdriver.TouchAction()
+												.press({
+													x: (loc.x + (size.width - 20)),
+													y: (loc.y + (size.height / 2))
+												})
+												.moveTo({
+													x: -(size.width * 1.5),
+													y: 0
+												})
+												.release();
+
+											return driver.performTouchAction(iOSAction);
+
+										case 'Android':
+											const AndroidAction = new webdriver.TouchAction()
+												.press({
+													x: (loc.x + (size.width - 20)),
+													y: (loc.y + (size.height / 2))
+												})
+												.moveTo({
+													x: -(size.width - 21),
+													y: 0
+												})
+												.release();
+
+											return driver.performTouchAction(AndroidAction);
+									}
+								});
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Swipe left across the entire width of the passed element.
+		 ************************************************************************/
+		webdriver.addElementPromiseMethod('swipeLeft', function () {
+			return this
+				.getSize()
+				.then(size => {
+					return this
+						.getLocation()
+						.then(loc => {
+							return driver
+								.getPlatform()
+								.then(platform => {
+									switch (platform) {
+										case 'iOS':
+											const iOSAction = new webdriver.TouchAction()
+												.press({
+													x: (loc.x + 20),
+													y: (loc.y + (size.height / 2))
+												})
+												.moveTo({
+													x: (size.width * 1.5),
+													y: 0
+												})
+												.release();
+
+											return driver.performTouchAction(iOSAction);
+
+										case 'Android':
+											const AndroidAction = new webdriver.TouchAction()
+												.press({
+													x: (loc.x + 20),
+													y: (loc.y + (size.height / 2))
+												})
+												.moveTo({
+													x: (size.width - 21),
+													y: 0
+												})
+												.release();
+
+											return driver.performTouchAction(AndroidAction);
+									}
+								});
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Check that a message appears in the device log.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('shouldLog', searchStrings => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					let logType;
+
+					if (platform === 'iOS') {
+						logType = 'syslog';
+					}
+					if (platform === 'Android') {
+						logType = 'logcat';
+					}
+
+					return driver
+						.sleep(1000)
+						.log(logType)
+						.then(log => {
+							let messages = [];
+
+							// Capture only the messages from the log
+							log.forEach(item => messages.push(item.message));
+
+							searchStrings.forEach(searchString => {
+								const
+									formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
+									expression = new RegExp(formatted);
+
+								messages.should.include.match(expression);
+							});
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Check that a message doesn't appear in the device log.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('shouldNotLog', searchStrings => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					let logType;
+
+					if (platform === 'iOS') {
+						logType = 'syslog';
+					}
+					if (platform === 'Android') {
+						logType = 'logcat';
+					}
+
+					return driver
+						.sleep(500)
+						.log(logType)
+						.then(log => {
+							let messages = [];
+
+							// Capture only the messages from the log
+							log.forEach(item => messages.push(item.message));
+
+							searchStrings.forEach(searchString => {
+								const
+									formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
+									expression = new RegExp(formatted);
+
+								messages.should.not.include.match(expression);
+							});
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Count the amount of times a message appears in a log.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('countLog', (searchStrings, iterations) => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					let logType;
+
+					if (platform === 'iOS') {
+						logType = 'syslog';
+					}
+					if (platform === 'Android') {
+						logType = 'logcat';
+					}
+
+					return driver
+						.sleep(500)
+						.log(logType)
+						.then(log => {
+							let messages = [];
+
+							// Capture only the messages from the log
+							log.forEach(item => {
+								searchStrings.forEach(searchString => {
+									const
+										formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
+										expression = new RegExp(formatted);
+
+									if (item.message.match(expression)) {
+										messages.push(item.message);
+									}
+								});
+							});
+
+							messages.length.should.equal(iterations);
+						});
+				});
+		});
+
+		/*************************************************************************
+		 * Used to find a ticket in the first page of an acceptance app.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('searchForTicket', ticket => {
+			ticket = ticket.replace('-', '');
+			return driver
+				.getPlatform()
+				.then(platform => {
+					if (platform === 'iOS') {
+						return driver
+							.waitForElementByClassName('XCUIElementTypeSearchField', webdriver.asserters.isDisplayed, 3000)
+							.click()
+							.sendKeys(ticket)
+							.elementByXPath('(//XCUIElementTypeCell)[1]')
+							.click();
+					} else if (platform === 'Android') {
+						return driver
+							.elementByClassName('android.widget.EditText')
+							.clear()
+							.sendKeys(ticket)
+							.elementByXPath(`(//android.widget.TextView[@text="${ticket}"])`)
+							.click()
+							.waitForElementByXPath(`(//android.widget.TextView[@text="${ticket}"])`, webdriver.asserters.isDisplayed, 10000);
+					}
+				});
+		});
+
+		/*************************************************************************
+		 * Used to find a ticket in the first page of an acceptance app, but will
+		 * expect an alert to be present as soon as the acceptance app loads.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('searchForTicketWithAlert', ticket => {
+			ticket = ticket.replace('-', '');
+			return driver
+				.getPlatform()
+				.then(platform => {
+					if (platform === 'iOS') {
+						return driver
+							.waitForElementByClassName('XCUIElementTypeSearchField', webdriver.asserters.isDisplayed, 3000)
+							.click()
+							.sendKeys(ticket)
+							.elementByXPath('(//XCUIElementTypeCell)[1]')
+							.click();
+					} else if (platform === 'Android') {
+						return driver
+							.elementByClassName('android.widget.EditText')
+							.clear()
+							.sendKeys(ticket)
+							.elementByXPath(`(//android.widget.TextView[@text="${ticket}"])`)
+							.click()
+							.waitForElementByAndroidUIAutomator('new UiSelector().text("Alert")', webdriver.asserters.isDisplayed, 10000);
+					}
+				});
+		});
+
 		/*****************************************************************************
 		 * Take a screenshot on the device, and then compare it to a reference
 		 * screenshot and validate the result against a configurable threshold
@@ -23,95 +748,111 @@ class WebDriver_Helper {
 		 * @param {String} modRoot - The path to the root of the project being tested
 		 * @param {Object} options - The optional paramteres for the function
 		 ****************************************************************************/
-		webdriver.addPromiseMethod('screenshotTest', async (file, modRoot, { thresh = 0.20, overwrite = false } = {}) => {
-			const
-				capabilities = await global.driver.sessionCapabilities(),
-				platform = capabilities.platformName;
-
+		webdriver.addPromiseMethod('screenshotTest', (file, modRoot, { thresh = 0.20, overwrite = false } = {}) => {
 			return new Promise((resolve, reject) => {
-				switch (platform) {
-					case 'iOS':
-					// Get the size of the window frame
-						driver
-							.elementByClassName('XCUIElementTypeApplication')
-							.getSize()
-							.then(windowSize => {
-							// Get the size of the status bar
+				driver
+					.getPlatform()
+					.then(platform => {
+						switch (platform) {
+							case 'iOS':
+							// Get the size of the window frame
 								driver
-									.elementByClassName('XCUIElementTypeStatusBar')
+									.elementByClassName('XCUIElementTypeApplication')
 									.getSize()
-									.then(statusSize => {
-									// Create the config for PNGCrop to use
-										let dimensions = {
-											height: (windowSize.height * 2),
-											width: (windowSize.width * 2),
-											top: (statusSize.height * 2)
-										};
-										// Take the screenshot
+									.then(windowSize => {
+									// Get the size of the status bar
 										driver
-											.sleep(2000)
-											.takeScreenshot()
-											.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite, dimensions))
-											.then(() => resolve())
-											.catch(err => reject(err));
+											.elementByClassName('XCUIElementTypeStatusBar')
+											.getSize()
+											.then(statusSize => {
+											// Create the config for PNGCrop to use
+												let dimensions = {
+													height: (windowSize.height * 2),
+													width: (windowSize.width * 2),
+													top: (statusSize.height * 2)
+												};
+												// Take the screenshot
+												driver
+													.sleep(2000)
+													.takeScreenshot()
+													.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite, dimensions))
+													.then(() => resolve())
+													.catch(err => reject(err));
+											});
 									});
-							});
-						break;
+								break;
 
-					case 'Android':
-						driver
-							.sleep(1000)
-							.elementsById('android:id/statusBarBackground')
-							.then(elements => {
-								if (elements.length > 0) {
-								// Get the size of the window frame
-									driver
-										.elementByXPath('//android.widget.FrameLayout[@instance="0"]')
-										.getSize()
-										.then(frameSize => {
-										// Get the size of the navigation bar
+							case 'Android':
+								driver
+									.sleep(1000)
+									.elementsById('android:id/statusBarBackground')
+									.then(elements => {
+										if (elements.length > 0) {
+										// Get the size of the window frame
 											driver
-												.elementById('android:id/navigationBarBackground')
+												.elementByXPath('//android.widget.FrameLayout[@instance="0"]')
 												.getSize()
-												.then(navSize => {
-												// Get the size of the status bar
+												.then(frameSize => {
+												// Get the size of the navigation bar
 													driver
-														.elementById('android:id/statusBarBackground')
+														.elementById('android:id/navigationBarBackground')
 														.getSize()
-														.then(statusSize => {
-														// Create the full window height
-															const
-																windowWidth = (frameSize.width),
-																windowHeight = (frameSize.height - (navSize.height * 1.5));
-
-															// Create the config for PNGCrop to use
-															let dimensions = {
-																height: (windowHeight),
-																width: (windowWidth),
-																top: (statusSize.height)
-															};
-
-															// Take the screenshot
+														.then(navSize => {
+														// Get the size of the status bar
 															driver
-																.sleep(1000)
-																.takeScreenshot()
-																.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite, dimensions))
-																.then(() => resolve())
-																.catch(err => reject(err));
+																.elementById('android:id/statusBarBackground')
+																.getSize()
+																.then(statusSize => {
+																// Create the full window height
+																	const
+																		windowWidth = (frameSize.width),
+																		windowHeight = (frameSize.height - (navSize.height * 1.5));
+
+																	// Create the config for PNGCrop to use
+																	let dimensions = {
+																		height: (windowHeight),
+																		width: (windowWidth),
+																		top: (statusSize.height)
+																	};
+
+																	// Take the screenshot
+																	driver
+																		.sleep(1000)
+																		.takeScreenshot()
+																		.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite, dimensions))
+																		.then(() => resolve())
+																		.catch(err => reject(err));
+																});
 														});
 												});
-										});
-								} else {
-								// Take the screenshot
-									driver
-										.sleep(1000)
-										.takeScreenshot()
-										.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite))
-										.then(() => resolve())
-										.catch(err => reject(err));
-								}
-							});
-				}
+										} else {
+										// Take the screenshot
+											driver
+												.sleep(1000)
+												.takeScreenshot()
+												.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite))
+												.then(() => resolve())
+												.catch(err => reject(err));
+										}
+									});
+						}
+					});
+			});
+		});
+
+		/*************************************************************************
+		 * Compares a screenshot of the app in its current state, to a stored
+		 * reference image to see how they match. (Leaves the status bar in, for
+		 * tests which may require it).
+		 ************************************************************************/
+		webdriver.addPromiseMethod('fullScreenshotTest', (file, modRoot, { thresh = 0.20, overwrite = false } = {}) => {
+			return new Promise((resolve, reject) => {
+				driver
+					.sleep(2000)
+					.takeScreenshot()
+					.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite))
+					.then(() => resolve())
+					.catch(err => reject(err));
 			});
 		});
 	}
@@ -223,4 +964,122 @@ function compImg(testImg, reference, thresh) {
 			}
 		});
 	});
+}
+
+/*******************************************************************************
+ * Generate a dynamic element identifier, based on the mobile OS, and the type
+ * of element
+ *
+ * @param {String} elementType - The type of UI element to identify
+ * @param {String} platform - The mobile OS to identify the element for
+ ******************************************************************************/
+function getElement(elementType, platform) {
+	switch (platform) {
+		case 'iOS':
+			switch (elementType) {
+				case 'TextField':
+					return 'XCUIElementTypeTextField';
+
+				case 'TextArea':
+					return 'XCUIElementTypeTextView';
+
+				case 'TableView':
+					return 'XCUIElementTypeTable';
+
+				case 'Button':
+					return 'XCUIElementTypeButton';
+
+				case 'TableViewRow':
+					return 'XCUIElementTypeCell';
+
+				case 'OptionDialog':
+					return 'XCUIElementTypeSheet';
+
+				case 'SearchField':
+					return 'XCUIElementTypeSearchField';
+
+				case 'DatePicker':
+					return 'XCUIElementTypeDatePicker';
+
+				case 'Window':
+					return 'XCUIElementTypeWindow';
+
+				case 'WebView':
+					return 'XCUIElementTypeWebView';
+
+				case 'ImageView':
+					return 'XCUIElementTypeImage';
+
+				case 'StatusBar':
+					return 'XCUIElementTypeStatusBar';
+
+				case 'KeyBoard':
+					return 'XCUIElementTypeKeyboard';
+
+				case 'ToolBar':
+					return 'XCUIElementTypeToolbar';
+
+				case 'PagingControl':
+					return 'XCUIElementTypePageIndicator';
+
+				case 'Slider':
+					return 'XCUIElementTypeSlider';
+
+				case 'Switch':
+					return 'XCUIElementTypeSwitch';
+
+				case 'ScrollView':
+					return 'XCUIElementTypeScrollView';
+
+				case 'Other':
+					return 'XCUIElementTypeOther';
+			}
+			break;
+
+		case 'Android':
+			switch (elementType) {
+				case 'TextField':
+					return 'android.widget.TextView';
+
+				case 'TextArea':
+					return 'android.widget.EditText';
+
+				case 'DatePicker':
+					return 'android.widget.DatePicker';
+
+				case 'SearchField':
+					return 'android.widget.EditText';
+
+				case 'TableView':
+					return 'android.widget.ListView';
+
+				case 'Window':
+					return 'android.view.ViewGroup';
+
+				case 'TableViewRow':
+					return 'android.view.ViewGroup';
+
+				case 'WebView':
+					return 'android.webkit.WebView';
+
+				case 'ImageView':
+					return 'android.widget.ImageView';
+
+				case 'StatusBar':
+					return 'android.view.View'; // Could be any number of views, needs to be more specific
+
+				case 'Slider':
+					return 'android.widget.SeekBar';
+
+				case 'Switch':
+					return 'android.widget.Switch';
+
+				case 'ScrollView':
+					return 'android.widget.ScrollView';
+
+				case 'Other':
+					return 'android.view.ViewGroup';
+			}
+			break;
+	}
 }

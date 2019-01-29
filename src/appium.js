@@ -57,11 +57,11 @@ class Appium_Helper {
 			// Establish the testing driver
 			let driver = wd.promiseChainRemote({ host: host, port: port });
 
-			global.driver = driver;
-			global.webdriver = wd;
-
 			// Make sure to include the custom commands defined in the WebDriver Helper
 			webdriver.loadDriverCommands(driver, wd);
+
+			global.driver = driver;
+			global.webdriver = wd;
 
 			driver.init(capabilities, err => {
 				(err) ? reject(err) : resolve();
