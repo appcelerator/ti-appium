@@ -303,6 +303,7 @@ class Appc_Helper {
 				// Appc CLI doesn't always provide an error code on fail, so need to monitor the output and look for issues manually
 				// If statement is there so that [WARN] flags are ignored on stderr
 				if (data.toString().includes('[ERROR]')) {
+					prc.kill();
 					return reject(data.toString().replace('[ERROR] ', ''));
 				}
 			});

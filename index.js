@@ -3,7 +3,9 @@
 const output = require('./src/output.js');
 
 exports.info = output.info;
+exports.step = output.step;
 exports.error = output.error;
+exports.debug = output.debug;
 
 exports.appcRun = require('./src/appcelerator.js').runner;
 
