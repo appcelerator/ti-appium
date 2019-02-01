@@ -29,7 +29,7 @@ class Appium_Helper {
 
 				case 'Android':
 					capabilities.deviceReadyTimeout = 60;
-					capabilities.automationName = 'Appium';
+					capabilities.automationName = 'UiAutomator2';
 					break;
 			}
 
