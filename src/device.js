@@ -12,32 +12,26 @@ class Device_Helper {
 	 *
 	 * @param {String} deviceName - The name of the AVD emulator used for testing
 	 ****************************************************************************/
-	static launchEmu(deviceName) {
-		return new Promise(async (resolve) => {
+	static async launchEmu(deviceName) {
+		try {
 			output.debug('Checking if emulator is already booted');
-			const booted = await getAndroidPID(deviceName);
 
-			if (booted) {
-				output.debug('Device is already booted');
+			await getAndroidPID(deviceName);
+		} catch (err) {
+			// Assume this is just down to no booted emulator
 
-				return resolve();
-			} else {
-				output.debug(`Launching Android device '${deviceName}'`);
+			output.debug(`Can't find a running instance, launching Android emulator '${deviceName}'`);
 
-				const
-					cmd = path.join(process.env.ANDROID_HOME, 'emulator', 'emulator'),
-					args = [ '-avd', deviceName, '-wipe-data' ];
+			const
+				cmd = path.join(process.env.ANDROID_HOME, 'emulator', 'emulator'),
+				args = [ '-avd', deviceName, '-wipe-data' ];
 
-				childProcess.spawn(cmd, args);
+			childProcess.spawn(cmd, args);
 
-				checkBooted('emulator')
-					.then(() => {
-						return resolve();
-					}).catch((err) => {
-						output.debug(err);
-					});
-			}
-		});
+			await checkBooted('emulator');
+		}
+
+		output.debug(`${deviceName} is booted`);
 	}
 
 	/*****************************************************************************
@@ -47,33 +41,26 @@ class Device_Helper {
 	 * @param {String} deviceName - The name of the Genymotion emulator used for
 	 *													 		testing
 	 ****************************************************************************/
-	static launchGeny(deviceName) {
-		return new Promise(async (resolve) => {
-			output.debug('Checking if Genymotion device is already booted');
+	static async launchGeny(deviceName) {
+		try {
+			output.debug('Checking if Genymotion emulator is already booted');
 
-			const booted = await getAndroidPID(deviceName);
+			await getAndroidPID(deviceName);
+		} catch (err) {
+			// Assume this is just down to no booted emulator
 
-			if (booted) {
-				output.debug('Device is already booted');
+			output.debug(`Can't find a running instance, booting Genymotion emulator '${deviceName}'`);
 
-				return resolve();
-			} else {
-				output.step(`Booting Genymotion Emulator '${deviceName}'`);
+			const
+				cmd = (process.platform === 'darwin') ? path.join('/', 'Applications', 'Genymotion.app', 'Contents', 'MacOS', 'player.app', 'Contents', 'MacOS', 'player') : path.join(), // TODO: Find Windows path to player
+				args = [ '--vm-name', deviceName ];
 
-				const
-					cmd = (global.hostOS === 'Mac') ? path.join('/', 'Applications', 'Genymotion.app', 'Contents', 'MacOS', 'player.app', 'Contents', 'MacOS', 'player') : path.join(), // TODO: Find Windows path to player
-					args = [ '--vm-name', deviceName ];
+			childProcess.spawn(cmd, args, { shell: true });
 
-				childProcess.spawn(cmd, args, { shell: true });
+			await checkBooted('genymotion');
+		}
 
-				checkBooted('genymotion')
-					.then(() => {
-						return resolve();
-					}).catch((err) => {
-						output.debug(err);
-					});
-			}
-		});
+		output.debug(`${deviceName} is booted`);
 	}
 
 	/*******************************************************************************
@@ -107,7 +94,7 @@ class Device_Helper {
 			output.debug('Detected Windows, killing emulator with taskkill command');
 			await childProcess.execSync(`taskkill /F /PID ${devicePID}`);
 		} else {
-			output.debug('Presuming MacOS, killing emulator with kill command');
+			output.debug('Presuming UNIX, killing emulator with kill command');
 			await childProcess.execSync(`kill -9 ${devicePID}`);
 		}
 	}
@@ -128,9 +115,7 @@ async function getAndroidPID(deviceName) {
 
 		return pid;
 	} catch (err) {
-		output.debug(`Cannot find an Android PID for ${deviceName}`);
-
-		return null;
+		throw Error(`Cannot find an Android PID for ${deviceName}`);
 	}
 }
 
@@ -141,25 +126,36 @@ async function getAndroidPID(deviceName) {
  ******************************************************************************/
 function checkBooted(platform) {
 	return new Promise((resolve, reject) => {
-		let cmd = (platform === 'emulator' || platform === 'genymotion') ? 'adb -e shell getprop init.svc.bootanim' : 'adb -d shell getprop init.svc.bootanim';
-		const interval = setInterval(() => {
-			childProcess.exec(cmd, (error, stdout, stderr) => {
+		let
+			count = 0,
+			cmd = (platform === 'emulator' || platform === 'genymotion') ? 'adb -e shell getprop init.svc.bootanim' : 'adb -d shell getprop init.svc.bootanim';
 
-				if (stdout.toString().indexOf('stopped') > -1) {
-					clearInterval(interval);
-					output.debug(`${platform} booted`);
-					resolve(true);
-				}
-				if (stderr) {
-					output.debug(stderr);
-				}
-				if (error) {
-					return reject(error);
-				} else {
-					output.debug(`${platform} still booting`);
-				}
-			});
-		}, 5000);
+		setTimeout(() => {
+			const interval = setInterval(() => {
+				childProcess.exec(cmd, (error, stdout, stderr) => {
+					count++;
+
+					if (stdout.toString().indexOf('stopped') > -1) {
+						clearInterval(interval);
+						return resolve();
+					} else if (count >= 20) {
+						clearInterval(interval);
+						return reject('Emulator didn\'t boot in 20 sequences, assuming an issue has occured');
+					}
+
+					if (stderr) {
+						output.debug(stderr);
+					}
+
+					if (error) {
+						clearInterval(interval);
+						return reject(error);
+					} else {
+						output.debug(`${platform} still booting`);
+					}
+				});
+			}, 3000);
+		}, 10000);
 	});
 }
 
