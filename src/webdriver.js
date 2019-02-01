@@ -751,6 +751,7 @@ class WebDriver_Helper {
 		webdriver.addPromiseMethod('screenshotTest', (file, modRoot, { thresh = 0.20, overwrite = false } = {}) => {
 			return new Promise((resolve, reject) => {
 				driver
+					.sleep(2000)
 					.getPlatform()
 					.then(platform => {
 						switch (platform) {
@@ -773,7 +774,6 @@ class WebDriver_Helper {
 												};
 												// Take the screenshot
 												driver
-													.sleep(2000)
 													.takeScreenshot()
 													.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite, dimensions))
 													.then(() => resolve())
@@ -784,51 +784,32 @@ class WebDriver_Helper {
 
 							case 'Android':
 								driver
-									.sleep(1000)
-									.elementsById('android:id/statusBarBackground')
+									.sleep(2000)
+									.elementsById('decor_content_parent')
 									.then(elements => {
 										if (elements.length > 0) {
 										// Get the size of the window frame
 											driver
-												.elementByXPath('//android.widget.FrameLayout[@instance="0"]')
-												.getSize()
-												.then(frameSize => {
-												// Get the size of the navigation bar
+												.elementById('decor_content_parent')
+												.getBounds()
+												.then(bounds => {
+												// Create the config for PNGCrop to use
+													const dimensions = {
+														height: (bounds.height),
+														width: (bounds.width),
+														top: (bounds.y)
+													};
+
+													// Take the screenshot
 													driver
-														.elementById('android:id/navigationBarBackground')
-														.getSize()
-														.then(navSize => {
-														// Get the size of the status bar
-															driver
-																.elementById('android:id/statusBarBackground')
-																.getSize()
-																.then(statusSize => {
-																// Create the full window height
-																	const
-																		windowWidth = (frameSize.width),
-																		windowHeight = (frameSize.height - (navSize.height * 1.5));
-
-																	// Create the config for PNGCrop to use
-																	let dimensions = {
-																		height: (windowHeight),
-																		width: (windowWidth),
-																		top: (statusSize.height)
-																	};
-
-																	// Take the screenshot
-																	driver
-																		.sleep(1000)
-																		.takeScreenshot()
-																		.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite, dimensions))
-																		.then(() => resolve())
-																		.catch(err => reject(err));
-																});
-														});
+														.takeScreenshot()
+														.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite, dimensions))
+														.then(() => resolve())
+														.catch(err => reject(err));
 												});
 										} else {
 										// Take the screenshot
 											driver
-												.sleep(1000)
 												.takeScreenshot()
 												.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite))
 												.then(() => resolve())

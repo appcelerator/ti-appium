@@ -249,7 +249,6 @@ class Appc_Helper {
 	 * @param {String} appName - The name of the app to identify the app package
 	 ****************************************************************************/
 	static createAppPath(dir, platform, appName) {
-		// NOTE: Could we maybe assume the basename of the passed dir is the same as the app name?
 		switch (platform) {
 			case 'ios':
 				const
