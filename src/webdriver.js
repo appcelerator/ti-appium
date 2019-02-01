@@ -45,7 +45,7 @@ class WebDriver_Helper {
 		/*************************************************************************
 		 * Get the text from the passed UI elements.
 		 ************************************************************************/
-		webdriver.addElementPromiseMethod('getText', () => {
+		webdriver.addElementPromiseMethod('getText', function () {
 			return driver
 				.getPlatform()
 				.then(platform => {
