@@ -96,7 +96,7 @@ class Appc_Helper {
 
 			prc.on('exit', code => {
 				if (code !== 0 || error === true) {
-					reject('Error installing Titanium SDK');
+					return reject(Error('Error installing Titanium SDK'));
 				} else {
 					try {
 						// If the SDK was already installed, the -d flag will have been ignored
@@ -171,7 +171,7 @@ class Appc_Helper {
 		return new Promise((resolve, reject) => {
 			// Validate the arguments are valid
 			if (args && !Array.isArray(args)) {
-				reject('Arguments must be an array');
+				return reject(Error('Arguments must be an array'));
 			}
 
 			// Generate a path to the tiapp.xml file
@@ -229,14 +229,13 @@ class Appc_Helper {
 				// Appc CLI doesn't always provide an error code on fail, so need to monitor the output and look for issues manually
 				// If statement is there so that [WARN] flags are ignored on stderr
 				if (data.toString().includes('[ERROR]')) {
-					return reject(data.toString().replace('[ERROR] ', ''));
+					prc.kill();
+					return reject(Error(data.toString().replace('[ERROR] ', '')));
 				}
 			});
 
 			prc.on('exit', code => {
-				const appPath = this.createAppPath(dir, platform, appName);
-
-				(code === 0 && appPath) ? resolve(appPath) : reject('Failed on application build');
+				(code === 0) ? resolve(this.createAppPath(dir, platform, appName)) : reject(Error('Failed on application build'));
 			});
 		});
 	}
@@ -303,12 +302,12 @@ class Appc_Helper {
 				// If statement is there so that [WARN] flags are ignored on stderr
 				if (data.toString().includes('[ERROR]')) {
 					prc.kill();
-					return reject(data.toString().replace('[ERROR] ', ''));
+					return reject(Error(data.toString().replace('[ERROR] ', '')));
 				}
 			});
 
 			prc.on('exit', code => {
-				(code === 0) ? resolve() : reject(`Command exited with code: ${code}`);
+				(code === 0) ? resolve() : reject(Error(`Command exited with code: ${code}`));
 			});
 		});
 	}
