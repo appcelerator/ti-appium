@@ -230,7 +230,7 @@ class Appc_Helper {
 				// If statement is there so that [WARN] flags are ignored on stderr
 				if (data.toString().includes('[ERROR]')) {
 					prc.kill();
-					return reject(Error(data.toString().replace('[ERROR] ', '')));
+					return reject(Error(data.toString().replace(/\W*\[ERROR\]\W*/, '')));
 				}
 			});
 
@@ -306,7 +306,7 @@ class Appc_Helper {
 				// If statement is there so that [WARN] flags are ignored on stderr
 				if (data.toString().includes('[ERROR]')) {
 					prc.kill();
-					return reject(Error(data.toString().replace('[ERROR] ', '')));
+					return reject(Error(data.toString().replace(/\W*\[ERROR\]\W*/, '')));
 				}
 			});
 
