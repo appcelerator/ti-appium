@@ -250,12 +250,16 @@ class Appc_Helper {
 	static createAppPath(dir, platform, appName) {
 		switch (platform) {
 			case 'ios':
-				const
-					products = path.join(dir, 'build', 'iphone', 'build', 'Products'),
-					productDir = fs.readdirSync(products)[0],
-					appPath = path.join(products, productDir, `${appName}.app`);
+				try {
+					const
+						products = path.join(dir, 'build', 'iphone', 'build', 'Products'),
+						productDir = fs.readdirSync(products)[0],
+						appPath = path.join(products, productDir, `${appName}.app`);
 
-				return appPath;
+					return appPath;
+				} catch (err) {
+					throw Error(`Issue scanning for app package: ${err}`);
+				}
 
 			case 'android':
 				return path.join(dir, 'build', 'android', 'bin', `${appName}.apk`);

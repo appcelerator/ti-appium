@@ -190,7 +190,7 @@ class Mocha_Helper {
 						}
 					});
 			} catch (err) {
-				reject('Issue on Mocha run');
+				reject(`Issue on Mocha run: ${err}`);
 			}
 		});
 	}
