@@ -8,9 +8,7 @@ exports.error = output.error;
 exports.debug = output.debug;
 
 exports.appcRun = require('./src/appcelerator.js').runner;
-
 exports.buildApp = require('./src/appcelerator.js').build;
-
 exports.createAppPath = require('./src/appcelerator.js').createAppPath;
 
 exports.appcSetup = async (conf, env) => {
@@ -28,11 +26,8 @@ exports.appcSetup = async (conf, env) => {
 };
 
 exports.stopAppium = require('./src/appium.js').quitServ;
-
 exports.stopClient = require('./src/appium.js').stopClient;
-
 exports.startAppium = require('./src/appium.js').runAppium;
-
 exports.startClient = require('./src/appium.js').startClient;
 
 exports.test = async (dir, modRoot) => {
@@ -57,7 +52,7 @@ exports.test = async (dir, modRoot) => {
 };
 
 exports.bootEmulator = require('./src/device.js').launchEmu;
-
 exports.killEmulator = require('./src/device.js').killEmu;
-
 exports.killSimulator = require('./src/device.js').killSim;
+exports.getCert = require('./src/device.js').getCert;
+exports.getProfile = require('./src/device.js').getProfile;

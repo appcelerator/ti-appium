@@ -124,7 +124,9 @@ class Output_Helper {
  * @param {String} message - String to be output
  ****************************************************************************/
 function sanitise(message) {
-	if (message instanceof Object) {
+	if (message instanceof Error) {
+		return message.toString('utf8');
+	} else if (message instanceof Object) {
 		if (message instanceof Buffer) {
 			return message.toString('utf8');
 		} else {

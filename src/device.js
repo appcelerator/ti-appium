@@ -3,6 +3,7 @@
 const
 	path = require('path'),
 	ps = require('ps-list'),
+	ioslib = require('ioslib'),
 	output = require('./output.js'),
 	childProcess = require('child_process');
 
@@ -97,6 +98,78 @@ class Device_Helper {
 			output.debug('Presuming UNIX, killing emulator with kill command');
 			await childProcess.execSync(`kill -9 ${devicePID}`);
 		}
+	}
+
+	/*******************************************************************************
+	 * Use ioslib to probe the machine for a particular iOS certificate, then
+	 * return the certificate object.
+	 *
+	 * @param {String} type - The type of operation the cert is defined for
+	 * @param {String} search - Part of the cert name, used to help locate it
+	 ******************************************************************************/
+	static async getCert(type, search) {
+		if (process.platform !== 'darwin') {
+			return undefined;
+		}
+
+		const
+			certs = await ioslib.certs.getCerts(),
+			subCerts = certs[type],
+			valid = [ 'developer', 'distribution' ];
+
+		if (!valid.includes(type)) {
+			throw Error(`Argument '${type}' is not a valid type of certificate`);
+		}
+
+		let foundCert;
+
+		subCerts.forEach(cert => {
+			if (cert.name.includes(search)) {
+				foundCert = cert;
+			}
+		});
+
+		if (!foundCert) {
+			throw Error(`No certificate found with a name including '${search}'`);
+		}
+
+		return foundCert;
+	}
+
+	/*******************************************************************************
+	 * Use ioslib to probe the machine for a particular iOS provisioning profile,
+	 * then return the provisioning profile object.
+	 *
+	 * @param {String} type - The type of operation the pp is defined for
+	 * @param {String} search - Part of the pp name, used to help locate it
+	 ******************************************************************************/
+	static async getProfile(type, search) {
+		if (process.platform !== 'darwin') {
+			return undefined;
+		}
+
+		const
+			profiles = await ioslib.provisioning.getProvisioningProfiles(),
+			subProfiles = profiles[type],
+			valid = [ 'adhoc', 'development', 'distribution' ];
+
+		if (!valid.includes(type)) {
+			throw Error(`Argument '${type}' is not a valid type of provisioning profile`);
+		}
+
+		let foundProfile;
+
+		subProfiles.forEach(profile => {
+			if (profile.name === search) {
+				foundProfile = profile;
+			}
+		});
+
+		if (!foundProfile) {
+			throw Error(`No provisioning profile found with a name matching '${search}'`);
+		}
+
+		return foundProfile;
 	}
 }
 
