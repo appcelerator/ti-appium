@@ -42,15 +42,23 @@ class Appc_Helper {
 	 *
 	 * @param {Object} appc - The details for the Appcelerator run
 	 ****************************************************************************/
-	static installSDK(appc) {
+	static installSDK(appc, { ti = false }) {
 		output.step(`Installing Appcelerator SDK '${appc.sdk}'`);
 
 		return new Promise((resolve, reject) => {
 			let
 				sdk,
-				cmd = 'appc',
-				args = [ 'ti', 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt', '--username', appc.username, '--password', appc.password, '-O', appc.organisation ],
+				cmd,
+				args,
 				error = false;
+
+			if (ti) {
+				cmd = 'ti';
+				args = [ 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt' ];
+			} else {
+				cmd = 'appc';
+				args = [ 'ti', 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt', '--username', appc.username, '--password', appc.password, '-O', appc.organisation ];
+			}
 
 			let
 				foundStr,
@@ -167,7 +175,7 @@ class Appc_Helper {
 	 * @param {String} platform - The mobile OS the app is being built for
 	 * @param {Array} args - Any additional arguments to be passed to the command
 	 ****************************************************************************/
-	static build(dir, platform, args) {
+	static build(dir, platform, { args = [], ti = false }) {
 		return new Promise((resolve, reject) => {
 			// Validate the arguments are valid
 			if (args && !Array.isArray(args)) {
@@ -180,7 +188,7 @@ class Appc_Helper {
 			// Prepare the tiapp.xml before build
 			const
 				tiapp = require('tiapp.xml').load(tiappFile),
-				sdks = exec('appc ti sdk list -o json'),
+				sdks = exec('ti sdk list -o json'),
 				sdk = JSON.parse(sdks).activeSDK,
 				appName = tiapp.name;
 
@@ -201,7 +209,17 @@ class Appc_Helper {
 			tiapp.write();
 
 			// Create our default arguments
-			let cmdArgs = [ 'run', '-f', '-d', dir, '-p', platform, '--no-prompt', '--build-only' ];
+			let
+				cmd,
+				cmdArgs;
+
+			if (ti) {
+				cmd = 'ti';
+				cmdArgs = [ 'build', '-f', '-d', dir, '-p', platform, '--no-prompt', '--build-only' ];
+			} else {
+				cmd = 'appc';
+				cmdArgs = [ 'run', '-f', '-d', dir, '-p', platform, '--no-prompt', '--build-only' ];
+			}
 
 			// Add any user defined arguments into the command
 			if (args) {
@@ -209,7 +227,7 @@ class Appc_Helper {
 			}
 
 			// Build a command string to display to the console
-			let argstring = 'appc';
+			let argstring = cmd;
 
 			cmdArgs.forEach(arg => {
 				argstring = `${argstring} ${arg}`;
@@ -218,7 +236,7 @@ class Appc_Helper {
 			output.debug(`Invoking command: ${argstring}`);
 
 			// Execute the run command, and listen for events
-			const prc = spawn('appc', cmdArgs);
+			const prc = spawn(cmd, cmdArgs);
 
 			prc.stdout.on('data', data => {
 				output.debug(data.toString());
@@ -279,10 +297,19 @@ class Appc_Helper {
 	 * @param {String} args - Arguments to be run after calling appc
 	 * @param {function} matcher - A function that can be used to resolve
 	 ****************************************************************************/
-	static runner(args, matcher) {
+	static runner(args, { matcher = undefined, ti = false }) {
 		return new Promise((resolve, reject) => {
+
+			let cmd;
+
+			if (ti) {
+				cmd = 'ti';
+			} else {
+				cmd = 'appc';
+			}
+
 			// Build a command string to display to the console
-			let argstring = 'appc';
+			let argstring = cmd;
 
 			args.forEach(arg => {
 				argstring = `${argstring} ${arg}`;
@@ -290,7 +317,7 @@ class Appc_Helper {
 
 			output.debug(`Invoking command: ${argstring}`);
 
-			const prc = spawn('appc', args);
+			const prc = spawn(cmd, args);
 
 			prc.stdout.on('data', data => {
 				output.debug(data.toString());
