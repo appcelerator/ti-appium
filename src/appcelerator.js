@@ -42,7 +42,7 @@ class Appc_Helper {
 	 *
 	 * @param {Object} appc - The details for the Appcelerator run
 	 ****************************************************************************/
-	static installSDK(appc, { ti = false }) {
+	static installSDK(appc, { ti = false } = {}) {
 		output.step(`Installing Appcelerator SDK '${appc.sdk}'`);
 
 		return new Promise((resolve, reject) => {
@@ -175,7 +175,7 @@ class Appc_Helper {
 	 * @param {String} platform - The mobile OS the app is being built for
 	 * @param {Array} args - Any additional arguments to be passed to the command
 	 ****************************************************************************/
-	static build(dir, platform, { args = [], ti = false }) {
+	static build(dir, platform, { args = [], ti = false } = {}) {
 		return new Promise((resolve, reject) => {
 			// Validate the arguments are valid
 			if (args && !Array.isArray(args)) {
@@ -297,7 +297,7 @@ class Appc_Helper {
 	 * @param {String} args - Arguments to be run after calling appc
 	 * @param {function} matcher - A function that can be used to resolve
 	 ****************************************************************************/
-	static runner(args, { matcher = undefined, ti = false }) {
+	static runner(args, { matcher = undefined, ti = false } = {}) {
 		return new Promise((resolve, reject) => {
 
 			let cmd;
