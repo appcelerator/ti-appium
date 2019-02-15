@@ -16,13 +16,13 @@ exports.appcSetup = async (conf, env, { ti = false } = {}) => {
 
 	try {
 		if (ti) {
-			await appc.installSDK(conf);
+			await appc.installSDK(conf, { ti: ti });
 		} else {
 			await appc.login(conf, env);
 
 			await appc.installCLI(conf);
 
-			await appc.installSDK(conf, { ti: ti });
+			await appc.installSDK(conf);
 		}
 	} catch (err) {
 		throw err;
