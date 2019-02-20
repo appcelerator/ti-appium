@@ -4,8 +4,11 @@ const output = require('./src/output.js');
 
 exports.info = output.info;
 exports.step = output.step;
+exports.skip = output.skip;
 exports.error = output.error;
 exports.debug = output.debug;
+exports.banner = output.banner;
+exports.finish = output.finish;
 
 exports.appcRun = require('./src/appcelerator.js').runner;
 exports.buildApp = require('./src/appcelerator.js').build;
@@ -15,15 +18,19 @@ exports.appcSetup = async (conf, env, { ti = false } = {}) => {
 	const appc = require('./src/appcelerator.js');
 
 	try {
+		let appcSDK;
+
 		if (ti) {
-			await appc.installSDK(conf, { ti: ti });
+			appcSDK = await appc.installSDK(conf, { ti: ti });
 		} else {
 			await appc.login(conf, env);
 
 			await appc.installCLI(conf);
 
-			await appc.installSDK(conf);
+			appcSDK = await appc.installSDK(conf);
 		}
+
+		return appcSDK;
 	} catch (err) {
 		throw err;
 	}
@@ -49,7 +56,9 @@ exports.test = async (dir, modRoot) => {
 			throw Error('No Tests Found!');
 		}
 
-		await mocha.run(tests, modRoot);
+		const results = await mocha.run(tests, modRoot);
+
+		return results;
 	} catch (err) {
 		throw err;
 	}

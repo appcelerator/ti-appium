@@ -128,12 +128,12 @@ class Mocha_Helper {
 							// Attempt to pull the name of the ticket using the file path of the test
 							let
 								test,
-								testNumber = parseInt(path.basename(data.file, '.js').split('.')[0], 10),
-								index = tests.indexOf(tests.find(x => x.testNum === testNumber));
+								fileName = path.basename(data.file),
+								index = tests.indexOf(tests.find(x => x.fileName === fileName));
 
 							if (data.pending === true) {
 								// Check if the ticket is already in the array
-								if (index > 0) {
+								if (index >= 0) {
 									// Add the skip message onto the object
 									tests[index].errors.push(data.title.replace(/\\/g, '').replace(/"/g, '\''));
 								} else {
@@ -141,13 +141,13 @@ class Mocha_Helper {
 									test = {
 										state: 3,
 										name: data.title,
-										testNum: testNumber,
+										fileName: fileName,
 										errors: [ data.title.replace(/\\/g, '').replace(/"/g, '\'') ]
 									};
 								}
 							} else if (data.state === 'passed') {
 								// Check if the ticket is already in the array
-								if (index > 0) {
+								if (index >= 0) {
 									// Change the state of the test to a pass if it was previously skipped
 									if (tests[index].state === 3) {
 										tests[index].state = 1;
@@ -157,7 +157,7 @@ class Mocha_Helper {
 									test = {
 										state: 1,
 										name: data.title,
-										testNum: testNumber,
+										fileName: fileName,
 										errors: []
 									};
 								}
@@ -165,7 +165,7 @@ class Mocha_Helper {
 								// Create a message to be attatched to the ticket
 								let failMessage = `[TEST STEP] ${data.title.replace(/"/g, '\'')}\\n[RESULT] ${data.err.message.replace(/\\/g, '').replace(/"/g, '\'')}`;
 								// Check if the ticket is already in the array
-								if (index > 0) {
+								if (index >= 0) {
 									// Change the state of the test to a failure
 									tests[index].state = 2;
 									// Add the error into the array
@@ -175,7 +175,7 @@ class Mocha_Helper {
 									test = {
 										state: 2,
 										name: data.title,
-										testNum: testNumber,
+										fileName: fileName,
 										errors: [ failMessage ]
 									};
 								}

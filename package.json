@@ -1,6 +1,6 @@
 {
   "name": "ti-appium",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "An Appium wrapper to test Titanium applications",
   "repository": {
     "type": "git",

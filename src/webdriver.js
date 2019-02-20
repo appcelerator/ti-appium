@@ -854,7 +854,7 @@ module.exports = WebDriver_Helper;
  ******************************************************************************/
 function processImg(file, modRoot, screenshot, thresh, overwrite, dimensions) {
 	return new Promise((resolve, reject) => {
-		const
+		let
 			screenshotDir = path.join(modRoot, 'Screen_Shots'),
 			screenshotPath = path.join(screenshotDir, path.basename(file));
 
@@ -867,6 +867,15 @@ function processImg(file, modRoot, screenshot, thresh, overwrite, dimensions) {
 				.then(() => resolve())
 				.catch(err => reject(err));
 		} else {
+			const elem = path.parse(screenshotPath);
+
+			screenshotPath = path.format({
+				name: `${elem.name}_Test`,
+				root: elem.root,
+				dir: elem.dir,
+				ext: elem.ext
+			});
+
 			output.debug(`Comparing ${screenshotPath} to ${file}`);
 			writeImg(screenshot, screenshotPath)
 				.then(() => cropImg(screenshotPath, dimensions))
