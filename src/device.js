@@ -12,8 +12,14 @@ class Device_Helper {
 	 * Launch the emulator specified in the Test_Config.js for the current test
 	 *
 	 * @param {String} deviceName - The name of the AVD emulator used for testing
+	 * @param {Array[String]} args - Additional arguments to boot emulator with
 	 ****************************************************************************/
-	static async launchEmu(deviceName) {
+	static async launchEmu(deviceName, args) {
+		// Validate the arguments are valid
+		if (args && !Array.isArray(args)) {
+			throw (new Error('Arguments must be an array'));
+		}
+
 		try {
 			output.debug('Checking if emulator is already booted');
 
@@ -23,11 +29,15 @@ class Device_Helper {
 
 			output.debug(`Can't find a running instance, launching Android emulator '${deviceName}'`);
 
-			const
+			let
 				cmd = path.join(process.env.ANDROID_HOME, 'emulator', 'emulator'),
-				args = [ '-avd', deviceName, '-wipe-data' ];
+				cmdArgs = [ '-avd', deviceName, '-wipe-data' ];
 
-			childProcess.spawn(cmd, args);
+			if (args) {
+				cmdArgs = cmdArgs.concat(args);
+			}
+
+			childProcess.spawn(cmd, cmdArgs);
 
 			await checkBooted('emulator');
 		}
