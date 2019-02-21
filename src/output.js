@@ -1,5 +1,7 @@
 'use strict';
 
+const cursPos = require('get-cursor-position');
+
 // Colours to be used in the console logging
 const
 	Red = '\x1b[31m',
@@ -23,6 +25,10 @@ class Output_Helper {
 		}
 
 		if (process.env.logging) {
+			if (cursPos.sync().col > 1) {
+				process.stdout.write('\n'); // Move down a line if interrupting another line
+			}
+
 			process.stdout.write(message);
 		}
 	}
@@ -66,10 +72,13 @@ class Output_Helper {
 	 * @param {String} message - A string to be output after the info tag
 	 ****************************************************************************/
 	static info(message) {
-
 		message = `${Green}[INFO]${Reset} ${sanitise(message)}\n`;
 
 		if (process.env.logging) {
+			if (cursPos.sync().col > 1) {
+				process.stdout.write('\n'); // Move down a line if interrupting another line
+			}
+
 			process.stdout.write(message);
 		}
 	}
@@ -82,11 +91,11 @@ class Output_Helper {
 	static error(message) {
 		message = `${Red}[ERROR] ${sanitise(message)}${Reset}\n`;
 
-		if (process.env.logging === 'basic') {
-			message = `\n${message}`;
-		}
-
 		if (process.env.logging) {
+			if (cursPos.sync().col > 1) {
+				process.stdout.write('\n'); // Move down a line if interrupting another line
+			}
+
 			process.stdout.write(message);
 		}
 	}
@@ -98,6 +107,10 @@ class Output_Helper {
 	 ****************************************************************************/
 	static banner(message) {
 		if (process.env.logging) {
+			if (cursPos.sync().col > 1) {
+				process.stdout.write('\n'); // Move down a line if interrupting another line
+			}
+
 			process.stdout.write('\n-------------------------------------------------------\n');
 			process.stdout.write(`${Green}[INFO]${Reset} ${message}\n`);
 			process.stdout.write('-------------------------------------------------------\n');
@@ -113,6 +126,10 @@ class Output_Helper {
 		message = `${Grey}[DEBUG] ${sanitise(message)}${Reset}\n`;
 
 		if (process.env.logging === 'debug') {
+			if (cursPos.sync().col > 1) {
+				process.stdout.write('\n'); // Move down a line if interrupting another line
+			}
+
 			process.stdout.write(message);
 		}
 	}
