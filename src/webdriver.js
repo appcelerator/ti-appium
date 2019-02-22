@@ -268,15 +268,36 @@ class WebDriver_Helper {
 		/*************************************************************************
 		 * Return an element, by its text content.
 		 ************************************************************************/
-		webdriver.addPromiseMethod('elementText', text => {
+		webdriver.addPromiseMethod('elementText', (text, preserve) => {
 			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
+				.sessions()
+				.then(sessions => {
+					switch (sessions[0].capabilities.platformName) {
 						case 'iOS':
 							return driver.elementById(text);
 
 						case 'Android':
+							function titleCase(str) {
+								return str.replace(
+									/\w\S*/g,
+									function (txt) {
+										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+									}
+								);
+							}
+
+							// Get the Android platform version from the Appium session
+							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
+
+							// Alter the string depending on the Android version
+							if (version >= 7.0) {
+								if (!preserve) {
+									text = text.toUpperCase();
+								}
+							} else if (!preserve) {
+								text = titleCase(text);
+							}
+
 							return driver.elementByAndroidUIAutomator(`new UiSelector().text("${text}")`);
 					}
 				});

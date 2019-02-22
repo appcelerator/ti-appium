@@ -22,19 +22,30 @@ class Appium_Helper {
 		return new Promise(async (resolve, reject) => {
 			output.debug('Starting WebDriver Instance');
 
-			switch (capabilities.platformName) {
-				case 'iOS':
-					capabilities.automationName = 'XCUITest';
-					break;
+			if (!capabilities.automationName) {
+				switch (capabilities.platformName) {
+					case 'iOS':
+						capabilities.automationName = 'XCUITest';
+						break;
 
-				case 'Android':
-					capabilities.deviceReadyTimeout = 60;
-					capabilities.automationName = 'UiAutomator2';
-					break;
+					case 'Android':
+						capabilities.automationName = 'UiAutomator2';
+						break;
+
+					default:
+						capabilities.automationName = 'Appium';
+						break;
+				}
+			}
+
+			if (!capabilities.deviceReadyTimeout && capabilities.platformName === 'Android') {
+				capabilities.deviceReadyTimeout = 60;
 			}
 
 			// Sets the amount of time Appium waits before shutting down in the background
-			capabilities.newCommandTimeout = (60 * 10);
+			if (!capabilities.newCommandTimeout) {
+				capabilities.newCommandTimeout = (60 * 10);
+			}
 
 			// Enabling chai assertion style: https://www.npmjs.com/package/chai-as-promised#node
 			chai.use(chaiAsPromised);
