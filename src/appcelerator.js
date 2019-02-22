@@ -42,22 +42,32 @@ class Appc_Helper {
 	 *
 	 * @param {Object} appc - The details for the Appcelerator run
 	 ****************************************************************************/
-	static installSDK(appc, { ti = false } = {}) {
+	static installSDK(appc, { args = [], ti = false } = {}) {
 		output.step(`Installing Appcelerator SDK '${appc.sdk}'`);
 
 		return new Promise((resolve, reject) => {
+			// Validate the arguments are valid
+			if (args && !Array.isArray(args)) {
+				return reject(Error('Arguments must be an array'));
+			}
+
 			let
 				sdk,
 				cmd,
-				args,
+				cmdArgs,
 				error = false;
 
 			if (ti) {
 				cmd = 'ti';
-				args = [ 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt' ];
+				cmdArgs = [ 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt' ];
 			} else {
 				cmd = 'appc';
-				args = [ 'ti', 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt', '--username', appc.username, '--password', appc.password, '-O', appc.organisation ];
+				cmdArgs = [ 'ti', 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt', '--username', appc.username, '--password', appc.password, '-O', appc.organisation ];
+			}
+
+			// Add any user defined arguments into the command
+			if (args) {
+				cmdArgs = cmdArgs.concat(args);
 			}
 
 			let
@@ -69,15 +79,15 @@ class Appc_Helper {
 
 				output.debug('Requested SDK is a specific version, not a branch, removing \'-b\' flag');
 				// Remove the branch flag if downloading a specific SDK
-				let index = args.indexOf(args.find(element => element === '-b'));
+				let index = cmdArgs.indexOf(cmdArgs.find(element => element === '-b'));
 
-				args.splice(index, 1);
+				cmdArgs.splice(index, 1);
 			} else {
 				foundStr = /is currently the newest version available\./;
 			}
 
 			output.debug('Beginning SDK install');
-			const prc = spawn(cmd, args, {
+			const prc = spawn(cmd, cmdArgs, {
 				shell: true
 			});
 
@@ -108,8 +118,12 @@ class Appc_Helper {
 				} else {
 					try {
 						// If the SDK was already installed, the -d flag will have been ignored
-						output.debug('Selecting the SDK');
-						exec(`appc ti sdk select ${sdk}`);
+						output.debug(`Selecting the SDK '${sdk}'`);
+						if (ti) {
+							exec(`ti sdk select ${sdk}`);
+						} else {
+							exec(`appc ti sdk select ${sdk}`);
+						}
 
 						output.finish(resolve, sdk);
 					} catch (err) {

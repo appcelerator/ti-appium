@@ -14,20 +14,20 @@ exports.appcRun = require('./src/appcelerator.js').runner;
 exports.buildApp = require('./src/appcelerator.js').build;
 exports.createAppPath = require('./src/appcelerator.js').createAppPath;
 
-exports.appcSetup = async (conf, env, { ti = false } = {}) => {
+exports.appcSetup = async (conf, env, { args = [], ti = false } = {}) => {
 	const appc = require('./src/appcelerator.js');
 
 	try {
 		let appcSDK;
 
 		if (ti) {
-			appcSDK = await appc.installSDK(conf, { ti: ti });
+			appcSDK = await appc.installSDK(conf, { args: args, ti: ti });
 		} else {
 			await appc.login(conf, env);
 
 			await appc.installCLI(conf);
 
-			appcSDK = await appc.installSDK(conf);
+			appcSDK = await appc.installSDK(conf, { args: args });
 		}
 
 		return appcSDK;
