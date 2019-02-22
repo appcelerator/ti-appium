@@ -25,9 +25,7 @@ class Output_Helper {
 		}
 
 		if (process.env.logging) {
-			if (cursPos.sync().col > 1) {
-				process.stdout.write('\n'); // Move down a line if interrupting another line
-			}
+			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
 			process.stdout.write(message);
 		}
@@ -75,9 +73,7 @@ class Output_Helper {
 		message = `${Green}[INFO]${Reset} ${sanitise(message)}\n`;
 
 		if (process.env.logging) {
-			if (cursPos.sync().col > 1) {
-				process.stdout.write('\n'); // Move down a line if interrupting another line
-			}
+			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
 			process.stdout.write(message);
 		}
@@ -92,9 +88,7 @@ class Output_Helper {
 		message = `${Red}[ERROR] ${sanitise(message)}${Reset}\n`;
 
 		if (process.env.logging) {
-			if (cursPos.sync().col > 1) {
-				process.stdout.write('\n'); // Move down a line if interrupting another line
-			}
+			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
 			process.stdout.write(message);
 		}
@@ -107,9 +101,7 @@ class Output_Helper {
 	 ****************************************************************************/
 	static banner(message) {
 		if (process.env.logging) {
-			if (cursPos.sync().col > 1) {
-				process.stdout.write('\n'); // Move down a line if interrupting another line
-			}
+			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
 			process.stdout.write('\n-------------------------------------------------------\n');
 			process.stdout.write(`${Green}[INFO]${Reset} ${message}\n`);
@@ -126,9 +118,7 @@ class Output_Helper {
 		message = `${Grey}[DEBUG] ${sanitise(message)}${Reset}\n`;
 
 		if (process.env.logging === 'debug') {
-			if (cursPos.sync().col > 1) {
-				process.stdout.write('\n'); // Move down a line if interrupting another line
-			}
+			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
 			process.stdout.write(message);
 		}
@@ -155,6 +145,21 @@ function sanitise(message) {
 		}
 
 		return message;
+	}
+}
+
+/*****************************************************************************
+ * Return a boolean based on whether or not the cursor is mid line
+ ****************************************************************************/
+function getPos() {
+	try {
+		if (cursPos.sync().col > 1) {
+			return true;
+		} else {
+			return false;
+		}
+	} catch (e) {
+		return false;
 	}
 }
 
