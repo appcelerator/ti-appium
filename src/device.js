@@ -13,11 +13,21 @@ class Device_Helper {
 	 *
 	 * @param {String} deviceName - The name of the AVD emulator used for testing
 	 * @param {Array[String]} args - Additional arguments to boot emulator with
+	 * @param {int} firstCheck - Time until the first emulator check is made (ms)
+	 * @param {int} freqCheck - Time between the emulator checks being made (ms)
 	 ****************************************************************************/
-	static async launchEmu(deviceName, args) {
+	static async launchEmu(deviceName, { args = [], firstCheck = 10000, freqCheck = 2000 } = {}) {
 		// Validate the arguments are valid
-		if (args && !Array.isArray(args)) {
+		if (!Array.isArray(args)) {
 			throw (new Error('Arguments must be an array'));
+		}
+
+		if (!Number.isInteger(firstCheck) || firstCheck < 0) {
+			throw (new Error('firstCheck must be a positive integer'));
+		}
+
+		if (!Number.isInteger(freqCheck) || freqCheck < 0) {
+			throw (new Error('freqCheck must be a positive integer'));
 		}
 
 		try {
@@ -39,7 +49,7 @@ class Device_Helper {
 
 			childProcess.spawn(cmd, cmdArgs);
 
-			await checkBooted('emulator');
+			await checkBooted('emulator', firstCheck, freqCheck);
 		}
 
 		output.debug(`${deviceName} is booted`);
@@ -68,7 +78,7 @@ class Device_Helper {
 
 			childProcess.spawn(cmd, args, { shell: true });
 
-			await checkBooted('genymotion');
+			await checkBooted('genymotion', 10000, 3000);
 		}
 
 		output.debug(`${deviceName} is booted`);
@@ -206,12 +216,17 @@ async function getAndroidPID(deviceName) {
  * Validate to see if there is a process running for this emulator.
  *
  * @param {String} platform - Device we need, supports emulator or genymotion
+ * @param {int} firstCheck - Time until the first emulator check is made (ms)
+ * @param {int} freqCheck - Time between the emulator checks being made (ms)
  ******************************************************************************/
-function checkBooted(platform) {
+function checkBooted(platform, firstCheck, freqCheck) {
 	return new Promise((resolve, reject) => {
 		let
 			count = 0,
 			cmd = (platform === 'emulator' || platform === 'genymotion') ? 'adb -e shell getprop init.svc.bootanim' : 'adb -d shell getprop init.svc.bootanim';
+
+		output.debug(`Checking emulator status in ${firstCheck}ms`);
+		output.debug(`Checking every ${freqCheck}ms following that`);
 
 		setTimeout(() => {
 			const interval = setInterval(() => {
@@ -237,8 +252,8 @@ function checkBooted(platform) {
 						output.debug(`${platform} still booting`);
 					}
 				});
-			}, 3000);
-		}, 10000);
+			}, freqCheck);
+		}, firstCheck);
 	});
 }
 

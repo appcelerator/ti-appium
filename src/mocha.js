@@ -53,12 +53,6 @@ class Mocha_Helper {
 				delete require.cache[file];
 			});
 
-			// Get the target of this test run
-			const
-				testPath = testFiles[0],
-				testDir = path.dirname(testPath),
-				testTarg = path.basename(testDir);
-
 			// Get the current date time, to label the test run in a unique manner
 			const
 				moment = require('moment-timezone'),
@@ -67,12 +61,12 @@ class Mocha_Helper {
 			// Create the labels
 			const
 				outDir = path.join(modRoot, 'Reports'),
-				outFile = path.join(outDir, `${testTarg}_${time}.xml`);
+				outFile = path.join(outDir, `${time}.xml`);
 
 			// Make sure our result location exists
 			fs.ensureFileSync(outFile);
 
-			output.debug(`Putting Jenkins results in ${testTarg}_${time}.xml`);
+			output.debug(`Putting Jenkins results in ${time}.xml`);
 
 			// Create the new Mocha instance
 			let mocha = new Mocha({
@@ -82,7 +76,7 @@ class Mocha_Helper {
 				slow: 80000,
 				reporter: 'mocha-jenkins-reporter',
 				reporterOptions: {
-					junit_report_name: testTarg,
+					junit_report_name: time,
 					junit_report_path: outFile,
 					junit_report_stack: 1
 				}
