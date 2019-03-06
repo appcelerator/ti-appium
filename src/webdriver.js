@@ -268,7 +268,7 @@ class WebDriver_Helper {
 		/*************************************************************************
 		 * Return an element, by its text content.
 		 ************************************************************************/
-		webdriver.addPromiseMethod('elementText', (text, preserve) => {
+		webdriver.addPromiseMethod('elementText', (text, { preserve = false } = {}) => {
 			return driver
 				.sessions()
 				.then(sessions => {
@@ -306,15 +306,36 @@ class WebDriver_Helper {
 		/*************************************************************************
 		 * Count the number of elements, by its text content.
 		 ************************************************************************/
-		webdriver.addPromiseMethod('elementsText', text => {
+		webdriver.addPromiseMethod('elementsText', (text, { preserve = false } = {}) => {
 			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
+				.sessions()
+				.then(sessions => {
+					switch (sessions[0].capabilities.platformName) {
 						case 'iOS':
 							return driver.elementsById(text);
 
 						case 'Android':
+							function titleCase(str) {
+								return str.replace(
+									/\w\S*/g,
+									function (txt) {
+										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+									}
+								);
+							}
+
+							// Get the Android platform version from the Appium session
+							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
+
+							// Alter the string depending on the Android version
+							if (version >= 7.0) {
+								if (!preserve) {
+									text = text.toUpperCase();
+								}
+							} else if (!preserve) {
+								text = titleCase(text);
+							}
+
 							return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
 					}
 				});
@@ -323,15 +344,36 @@ class WebDriver_Helper {
 		/*************************************************************************
 		 * Return an element, by its text content, but allow wait.
 		 ************************************************************************/
-		webdriver.addPromiseMethod('waitForElementText', (text, time) => {
+		webdriver.addPromiseMethod('waitForElementText', (text, { preserve = false, time = 1000 } = {}) => {
 			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
+				.sessions()
+				.then(sessions => {
+					switch (sessions[0].capabilities.platformName) {
 						case 'iOS':
 							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
 
 						case 'Android':
+							function titleCase(str) {
+								return str.replace(
+									/\w\S*/g,
+									function (txt) {
+										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+									}
+								);
+							}
+
+							// Get the Android platform version from the Appium session
+							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
+
+							// Alter the string depending on the Android version
+							if (version >= 7.0) {
+								if (!preserve) {
+									text = text.toUpperCase();
+								}
+							} else if (!preserve) {
+								text = titleCase(text);
+							}
+
 							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
 					}
 				});
@@ -595,7 +637,83 @@ class WebDriver_Helper {
 		});
 
 		/*************************************************************************
+		 * Return the latest log capture from Appium
+		 ************************************************************************/
+		webdriver.addPromiseMethod('getLog', () => {
+			return driver
+				.getPlatform()
+				.then(platform => {
+					let logType;
+
+					if (platform === 'iOS') {
+						logType = 'syslog';
+					}
+					if (platform === 'Android') {
+						logType = 'logcat';
+					}
+
+					return driver
+						.sleep(500)
+						.log(logType)
+						.then(log => {
+							let messages = [];
+
+							// Capture only the messages from the log
+							log.forEach(item => messages.push(item.message));
+
+							return messages;
+						});
+				});
+		});
+
+		/*************************************************************************
 		 * Check that a message appears in the device log.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('logShouldContain', (log, searchStrings) => {
+			searchStrings.forEach(searchString => {
+				const
+					formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
+					expression = new RegExp(formatted);
+
+				log.should.include.match(expression);
+			});
+		});
+
+		/*************************************************************************
+		 * Check that a message doesn't appear in the device log.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('logShouldNotContain', (log, searchStrings) => {
+			searchStrings.forEach(searchString => {
+				const
+					formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
+					expression = new RegExp(formatted);
+
+				log.should.not.include.match(expression);
+			});
+		});
+
+		/*************************************************************************
+		 * Count the amount of times a message appears in a log.
+		 ************************************************************************/
+		webdriver.addPromiseMethod('logCount', (log, searchString, iterations) => {
+			const messages = [];
+
+			// Capture only the messages from the log
+			log.forEach(item => {
+				const
+					formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
+					expression = new RegExp(formatted);
+
+				if (item.match(expression)) {
+					messages.push(item);
+				}
+			});
+
+			messages.length.should.equal(iterations);
+		});
+
+		/*************************************************************************
+		 * Check that a message appears in the device log. (DEPRECATED)
 		 ************************************************************************/
 		webdriver.addPromiseMethod('shouldLog', searchStrings => {
 			return driver
@@ -631,7 +749,7 @@ class WebDriver_Helper {
 		});
 
 		/*************************************************************************
-		 * Check that a message doesn't appear in the device log.
+		 * Check that a message doesn't appear in the device log. (DEPRECATED)
 		 ************************************************************************/
 		webdriver.addPromiseMethod('shouldNotLog', searchStrings => {
 			return driver
@@ -667,7 +785,7 @@ class WebDriver_Helper {
 		});
 
 		/*************************************************************************
-		 * Count the amount of times a message appears in a log.
+		 * Count the amount of times a message appears in a log. (DEPRECATED)
 		 ************************************************************************/
 		webdriver.addPromiseMethod('countLog', (searchStrings, iterations) => {
 			return driver
