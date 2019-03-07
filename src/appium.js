@@ -3,12 +3,9 @@
 const
 	wd = require('wd'),
 	chai = require('chai'),
-	path = require('path'),
-	ps = require('ps-list'),
+	appium = require('appium'),
 	output = require('./output.js'),
 	webdriver = require('./webdriver.js'),
-	spawn = require('child_process').spawn,
-	exec = require('child_process').execSync,
 	chaiAsPromised = require('chai-as-promised');
 
 class Appium_Helper {
@@ -54,19 +51,8 @@ class Appium_Helper {
 			// Enables chai assertion chaining
 			chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
-			// Retrieve the Appium server address and port, to setup the client
-			const
-				processInfo = await getAppium(),
-				args = processInfo.cmd.split(' '),
-				host = args[args.indexOf('-a') + 1],
-				port = args[args.indexOf('-p') + 1];
-
-			if (typeof host === 'undefined' || typeof port === 'undefined') {
-				reject('Cannot locate Appium server details');
-			}
-
 			// Establish the testing driver
-			let driver = wd.promiseChainRemote({ host: host, port: port });
+			let driver = wd.promiseChainRemote({ host: this.host, port: this.port });
 
 			// Make sure to include the custom commands defined in the WebDriver Helper
 			webdriver.loadDriverCommands(driver, wd);
@@ -116,57 +102,20 @@ class Appium_Helper {
 	 * @param {String} modRoot - The path to the root of the project being tested
 	 * @param {Object} options - Object containing hostname and port for server
 	 ****************************************************************************/
-	static runAppium(modRoot, { hostname = 'localhost', port = 4723 } = {}) {
+	static async runAppium(modRoot, { hostname = 'localhost', port = 4723 } = {}) {
 		output.step(`Starting Appium Server On '${hostname}:${port}'`);
+		// We only want to allow starting a server on the local machine
+		const validAddresses = [ 'localhost', '0.0.0.0', '127.0.0.1' ];
 
-		return new Promise((resolve, reject) => {
-			// We only want to allow starting a server on the local machine
-			const validAddresses = [ 'localhost', '0.0.0.0', '127.0.0.1' ];
+		if (validAddresses.includes(hostname)) {
+			this.server = await appium.main({ host: hostname, port: port, loglevel: 'false', defaultCapabilities: { showIOSLog: true } });
+			this.host = hostname;
+			this.port = port;
+		} else {
+			throw Error('Connecting to an External Appium Server is Not Currently Supported');
+		}
 
-			if (validAddresses.includes(hostname)) {
-				let exe;
-
-				switch (process.platform) {
-					case 'darwin':
-						exe = 'appium';
-						break;
-
-					case 'win32':
-						exe = 'appium.cmd';
-						break;
-				}
-
-				let
-					appiumExe = path.join(modRoot, 'node_modules', '.bin', exe),
-					flags = [ '--log-no-colors', '-a', hostname, '-p', port, '--show-ios-log' ];
-
-				const appiumServer = spawn(appiumExe, flags, {
-					shell: true
-				});
-
-				appiumServer.stdout.on('data', data => {
-					const line = data.toString().trim();
-
-					const
-						regStr = `started on ${hostname}\\:${port}$`,
-						isRunning = new RegExp(regStr, 'g').test(line);
-
-					if (isRunning) {
-						output.finish(resolve, appiumServer);
-					}
-				});
-
-				appiumServer.stderr.on('data', data => {
-					reject(data.toString());
-				});
-
-				appiumServer.on('error', err => {
-					reject(err.stack);
-				});
-			} else {
-				reject('Connecting to an External Appium Server is Not Currently Supported');
-			}
-		});
+		output.finish();
 	}
 
 	/*****************************************************************************
@@ -175,36 +124,24 @@ class Appium_Helper {
 	static async quitServ() {
 		output.step('Stopping Appium Server');
 
-		const processInfo = await getAppium();
+		try {
+			if (this.server) {
+				output.debug('Found running Appium Instance');
+				await this.server.close();
 
-		if (processInfo) {
-			output.debug(`Found Appium server PID: ${processInfo.pid}`);
-		} else {
-			throw Error('PID for Appium not found!');
-		}
-
-		if (process.platform === 'win32') {
-			output.debug('Detected Windows, killing Appium server with taskkill command');
-			await exec(`taskkill /F /PID ${processInfo.pid}`);
-		} else {
-			output.debug('Presuming UNIX, killing Appium server with kill command');
-			await exec(`kill -9 ${processInfo.pid}`);
+				output.debug('Clearing class variables');
+				delete this.server;
+				delete this.host;
+				delete this.port;
+			} else {
+				throw Error('Appium server not found!');
+			}
+		} catch (e) {
+			throw e;
 		}
 
 		output.finish();
 	}
-}
-
-/*****************************************************************************
- * Retrieves the PID for the Appium server from a list of running processes
- ****************************************************************************/
-async function getAppium() {
-	const
-		list = await ps(),
-		appiumPath = path.join('node_modules', '.bin', 'appium'),
-		processInfo = list.find(x => x.cmd.includes(appiumPath));
-
-	return processInfo;
 }
 
 module.exports = Appium_Helper;
