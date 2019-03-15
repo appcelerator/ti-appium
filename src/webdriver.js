@@ -828,7 +828,7 @@ class WebDriver_Helper {
 		 * Used to find a ticket in the first page of an acceptance app.
 		 ************************************************************************/
 		webdriver.addPromiseMethod('searchForTicket', ticket => {
-			ticket = ticket.replace('-', '');
+			ticket = ticket.replace(/-/g, '');
 			return driver
 				.getPlatform()
 				.then(platform => {
@@ -887,10 +887,10 @@ class WebDriver_Helper {
 		 * @param {String} modRoot - The path to the root of the project being tested
 		 * @param {Object} options - The optional paramteres for the function
 		 ****************************************************************************/
-		webdriver.addPromiseMethod('screenshotTest', (file, modRoot, { thresh = 0.20, overwrite = false } = {}) => {
+		webdriver.addPromiseMethod('screenshotTest', (file, modRoot, { thresh = 0.20, overwrite = false, delay = 2000 } = {}) => {
 			return new Promise((resolve, reject) => {
 				driver
-					.sleep(2000)
+					.sleep(delay)
 					.getPlatform()
 					.then(platform => {
 						switch (platform) {
@@ -923,7 +923,7 @@ class WebDriver_Helper {
 
 							case 'Android':
 								driver
-									.sleep(2000)
+									.sleep(delay)
 									.elementsById('decor_content_parent')
 									.then(elements => {
 										if (elements.length > 0) {
@@ -965,10 +965,10 @@ class WebDriver_Helper {
 		 * reference image to see how they match. (Leaves the status bar in, for
 		 * tests which may require it).
 		 ************************************************************************/
-		webdriver.addPromiseMethod('fullScreenshotTest', (file, modRoot, { thresh = 0.20, overwrite = false } = {}) => {
+		webdriver.addPromiseMethod('fullScreenshotTest', (file, modRoot, { thresh = 0.20, overwrite = false, delay = 2000 } = {}) => {
 			return new Promise((resolve, reject) => {
 				driver
-					.sleep(2000)
+					.sleep(delay)
 					.takeScreenshot()
 					.then(screenshot => processImg(file, modRoot, screenshot, thresh, overwrite))
 					.then(() => resolve())
