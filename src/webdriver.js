@@ -406,21 +406,17 @@ class WebDriver_Helper {
 		 ************************************************************************/
 		webdriver.addElementPromiseMethod('longpress', function () {
 			return this
-				.getSize()
-				.then(size => {
-					return this
-						.getLocation()
-						.then(loc => {
-							const action = new webdriver.TouchAction()
-								.press({
-									x: (loc.x + (size.width / 2)),
-									y: (loc.y + (size.height / 2))
-								})
-								.wait(3000)
-								.release();
+				.getBounds()
+				.then(bounds => {
+					const action = new webdriver.TouchAction()
+						.press({
+							x: (bounds.x + (bounds.width / 2)),
+							y: (bounds.y + (bounds.height / 2))
+						})
+						.wait(3000)
+						.release();
 
-							return driver.performTouchAction(action);
-						});
+					return driver.performTouchAction(action);
 				});
 		});
 
@@ -429,211 +425,135 @@ class WebDriver_Helper {
 		 ************************************************************************/
 		webdriver.addElementPromiseMethod('doubleClick', function () {
 			return this
-				.getSize()
-				.then(size => {
-					return this
-						.getLocation()
-						.then(loc => {
-							const action = new webdriver.TouchAction()
-								.press({
-									x: (loc.x + (size.width / 2)),
-									y: (loc.y + (size.height / 2))
-								})
-								.release();
+				.getBounds()
+				.then(bounds => {
+					const action = new webdriver.TouchAction()
+						.press({
+							x: (bounds.x + (bounds.width / 2)),
+							y: (bounds.y + (bounds.height / 2))
+						})
+						.release();
 
-							return driver
-								.performTouchAction(action)
-								.performTouchAction(action);
-						});
+					return driver
+						.performTouchAction(action)
+						.performTouchAction(action);
 				});
 		});
 
 		/*************************************************************************
 		 * Scroll up on the entire height of the passed element.
 		 ************************************************************************/
-		webdriver.addElementPromiseMethod('scrollUp', function () {
-			return this
-				.getSize()
-				.then(size => {
-					return this
-						.getLocation()
-						.then(loc => {
-							return driver
-								.getPlatform()
-								.then(platform => {
-									switch (platform) {
-										case 'iOS':
-											const iOSAction = new webdriver.TouchAction()
-												.press({
-													x: (loc.x + (size.width / 2)),
-													y: (loc.y + 20)
-												})
-												.moveTo({
-													x: 0,
-													y: (size.height * 1.5)
-												})
-												.release();
+		webdriver.addElementPromiseMethod('scrollUp', async function () {
+			const
+				platform = await driver.getPlatform(),
+				bounds = await this.getBounds();
 
-											return driver.performTouchAction(iOSAction);
+			switch (platform) {
+				case 'iOS':
+					await driver.execute('mobile: scroll', { direction: 'up', element: this });
+					break;
 
-										case 'Android':
-											const AndroidAction = new webdriver.TouchAction()
-												.press({
-													x: (loc.x + (size.width / 2)),
-													y: (loc.y + 20)
-												})
-												.moveTo({
-													x: 0,
-													y: (size.height - 21)
-												})
-												.release();
-
-											return driver.performTouchAction(AndroidAction);
-									}
-								});
-						});
-				});
+				case 'Android':
+					await driver.performTouchAction(
+						new webdriver.TouchAction()
+							.press({
+								x: (bounds.x + (bounds.width / 2)),
+								y: (bounds.y + 1)
+							})
+							.moveTo({
+								x: (bounds.x + (bounds.width / 2)),
+								y: (bounds.y + (bounds.height - 1))
+							})
+							.release());
+					break;
+			}
 		});
 
 		/*************************************************************************
 		 * Scroll down on the entire height of the passed element.
 		 ************************************************************************/
-		webdriver.addElementPromiseMethod('scrollDown', function () {
-			return this
-				.getSize()
-				.then(size => {
-					return this
-						.getLocation()
-						.then(loc => {
-							return driver
-								.getPlatform()
-								.then(platform => {
-									switch (platform) {
-										case 'iOS':
-											const iOSAction = new webdriver.TouchAction()
-												.press({
-													x: (loc.x + (size.width / 2)),
-													y: (loc.y + (size.height - 20))
-												})
-												.moveTo({
-													x: 0,
-													y: -(size.height * 1.5)
-												})
-												.release();
+		webdriver.addElementPromiseMethod('scrollDown', async function () {
+			const
+				platform = await driver.getPlatform(),
+				bounds = await this.getBounds();
 
-											return driver.performTouchAction(iOSAction);
+			switch (platform) {
+				case 'iOS':
+					await driver.execute('mobile: scroll', { direction: 'down', element: this });
+					break;
 
-										case 'Android':
-											const AndroidAction = new webdriver.TouchAction()
-												.press({
-													x: (loc.x + (size.width / 2)),
-													y: (loc.y + (size.height - 20))
-												})
-												.moveTo({
-													x: 0,
-													y: -(size.height - 21)
-												})
-												.release();
-
-											return driver.performTouchAction(AndroidAction);
-									}
-								});
-						});
-				});
+				case 'Android':
+					await driver.performTouchAction(
+						new webdriver.TouchAction()
+							.press({
+								x: (bounds.x + (bounds.width / 2)),
+								y: (bounds.y + (bounds.height - 1))
+							})
+							.moveTo({
+								x: (bounds.x + (bounds.width / 2)),
+								y: (bounds.y + 1)
+							})
+							.release());
+					break;
+			}
 		});
 
 		/*************************************************************************
 		 * Swipe right across the entire width of the passed element.
 		 ************************************************************************/
-		webdriver.addElementPromiseMethod('swipeRight', function () {
-			return this
-				.getSize()
-				.then(size => {
-					return this
-						.getLocation()
-						.then(loc => {
-							return driver
-								.getPlatform()
-								.then(platform => {
-									switch (platform) {
-										case 'iOS':
-											const iOSAction = new webdriver.TouchAction()
-												.press({
-													x: (loc.x + (size.width - 20)),
-													y: (loc.y + (size.height / 2))
-												})
-												.moveTo({
-													x: -(size.width * 1.5),
-													y: 0
-												})
-												.release();
+		webdriver.addElementPromiseMethod('swipeRight', async function () {
+			const
+				platform = await driver.getPlatform(),
+				bounds = await this.getBounds();
 
-											return driver.performTouchAction(iOSAction);
+			switch (platform) {
+				case 'iOS':
+					await driver.execute('mobile: swipe', { direction: 'right', element: this });
+					break;
 
-										case 'Android':
-											const AndroidAction = new webdriver.TouchAction()
-												.press({
-													x: (loc.x + (size.width - 20)),
-													y: (loc.y + (size.height / 2))
-												})
-												.moveTo({
-													x: -(size.width - 21),
-													y: 0
-												})
-												.release();
-
-											return driver.performTouchAction(AndroidAction);
-									}
-								});
-						});
-				});
+				case 'Android':
+					await driver.performTouchAction(
+						new webdriver.TouchAction()
+							.press({
+								x: (bounds.x + 1),
+								y: (bounds.y + (bounds.height / 2))
+							})
+							.moveTo({
+								x: (bounds.x + (bounds.width - 1)),
+								y: (bounds.y + (bounds.height / 2))
+							})
+							.release());
+					break;
+			}
 		});
 
 		/*************************************************************************
 		 * Swipe left across the entire width of the passed element.
 		 ************************************************************************/
-		webdriver.addElementPromiseMethod('swipeLeft', function () {
-			return this
-				.getSize()
-				.then(size => {
-					return this
-						.getLocation()
-						.then(loc => {
-							return driver
-								.getPlatform()
-								.then(platform => {
-									switch (platform) {
-										case 'iOS':
-											const iOSAction = new webdriver.TouchAction()
-												.press({
-													x: (loc.x + 20),
-													y: (loc.y + (size.height / 2))
-												})
-												.moveTo({
-													x: (size.width * 1.5),
-													y: 0
-												})
-												.release();
+		webdriver.addElementPromiseMethod('swipeLeft', async function () {
+			const
+				platform = await driver.getPlatform(),
+				bounds = await this.getBounds();
 
-											return driver.performTouchAction(iOSAction);
+			switch (platform) {
+				case 'iOS':
+					await driver.execute('mobile: swipe', { direction: 'left', element: this });
+					break;
 
-										case 'Android':
-											const AndroidAction = new webdriver.TouchAction()
-												.press({
-													x: (loc.x + 20),
-													y: (loc.y + (size.height / 2))
-												})
-												.moveTo({
-													x: (size.width - 21),
-													y: 0
-												})
-												.release();
-
-											return driver.performTouchAction(AndroidAction);
-									}
-								});
-						});
-				});
+				case 'Android':
+					await driver.performTouchAction(
+						new webdriver.TouchAction()
+							.press({
+								x: (bounds.x + (bounds.width - 1)),
+								y: (bounds.y + (bounds.height / 2))
+							})
+							.moveTo({
+								x: (bounds.x + 1),
+								y: (bounds.y + (bounds.height / 2))
+							})
+							.release());
+					break;
+			}
 		});
 
 		/*************************************************************************
