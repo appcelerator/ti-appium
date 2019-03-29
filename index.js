@@ -1,6 +1,9 @@
 'use strict';
 
-const output = require('./src/output.js');
+const
+	path = require('path'),
+	mocha = require('./src/mocha.js'),
+	output = require('./src/output.js');
 
 exports.info = output.info;
 exports.step = output.step;
@@ -42,10 +45,6 @@ exports.startAppium = require('./src/appium.js').runAppium;
 exports.startClient = require('./src/appium.js').startClient;
 
 exports.test = async (dir, modRoot) => {
-	const
-		path = require('path'),
-		mocha = require('./src/mocha.js');
-
 	try {
 		output.banner(`Running test directory ${path.basename(dir)}`);
 
