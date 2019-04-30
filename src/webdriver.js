@@ -226,7 +226,7 @@ class WebDriver_Helper {
 							return driver.elementById(element);
 
 						case 'Android':
-							return driver.elementById(`${element}.`);
+							return driver.elementByAccessibilityId(`${element}.`);
 					}
 				});
 		});
@@ -243,7 +243,7 @@ class WebDriver_Helper {
 							return driver.elementsById(element);
 
 						case 'Android':
-							return driver.elementsById(`${element}.`);
+							return driver.elementsByAccessibilityId(`${element}.`);
 					}
 				});
 		});
@@ -260,7 +260,7 @@ class WebDriver_Helper {
 							return driver.waitForElementById(elementType, webdriver.asserters.isDisplayed, time);
 
 						case 'Android':
-							return driver.waitForElementById(`${elementType}.`, webdriver.asserters.isDisplayed, time);
+							return driver.waitForElementByAccessibilityId(`${elementType}.`, webdriver.asserters.isDisplayed, time);
 					}
 				});
 		});
