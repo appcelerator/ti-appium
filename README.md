@@ -3,7 +3,7 @@ An npm package created to be a backbone for Appium based Titanium testing. Desig
 
 This is still pretty early on in development, features are being worked on as issues arise in the suite creation process. There is also a high chance of functionality bugs, so please don't be afraid to submit issues in [GitHub](https://github.com/appcelerator/ti-appium/issues)! 
 
-Proper documentation to come in the future...
+~~Proper documentation to come in the future...~~ [Proper documentation has arrived!](https://appcelerator.github.io/ti-appium/)
 
 ## Current Appcelerator Appium Efforts
 - [Phoenix](https://github.com/appcelerator/phoenix)
