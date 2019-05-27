@@ -4,6 +4,7 @@
       "security/detect-non-literal-regexp":"off",
       "security/detect-child-process":"off",
       "security/detect-new-buffer":"off",
+      "max-statements-per-line":"off",
       "spaced-comment":"off",
       "valid-jsdoc":"off",
       "max-len":"off",

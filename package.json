@@ -1,6 +1,6 @@
 {
   "name": "ti-appium",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "An Appium wrapper to test Titanium applications",
   "repository": {
     "type": "git",
@@ -8,7 +8,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "lint": "eslint --config axway/env-node ."
+    "lint": "eslint --config axway/env-node .",
+    "docs": "jsdoc . ./src -d ./docs/"
   },
   "keywords": [
     "Appium",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "eslint": "^4.19.1",
-    "eslint-config-axway": "^2.0.14"
+    "eslint-config-axway": "^2.0.14",
+    "jsdoc": "^3.6.2"
   }
 }
