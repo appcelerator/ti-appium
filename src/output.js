@@ -1,7 +1,5 @@
 'use strict';
 
-const cursPos = require('get-cursor-position');
-
 // Colours to be used in the console logging
 const
 	Red = '\x1b[31m',
@@ -160,7 +158,7 @@ function sanitise(message) {
  */
 function getPos() {
 	try {
-		if (cursPos.sync().col > 1) {
+		if (require('get-cursor-position').sync().col > 1) {
 			return true;
 		} else {
 			return false;
