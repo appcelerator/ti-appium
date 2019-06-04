@@ -105,9 +105,9 @@ class Appium_Helper {
 	 * desktop session.
 	 *
 	 * @param {String} modRoot - The path to the root of the project being tested
-	 * @param {Object} args - Arguments
-	 * @param {String} args.hostname - The address of the Appium server to connect to
-	 * @param {Int} args.port - The port of the server that the Appium server is running on
+	 * @param {Object} opts - Optional arguments
+	 * @param {String} opts.hostname - The address of the Appium server to connect to
+	 * @param {Int} opts.port - The port of the server that the Appium server is running on
 	 */
 	static async runAppium(modRoot, { hostname = 'localhost', port = 4723 } = {}) {
 		output.step(`Starting Appium Server On '${hostname}:${port}'`);

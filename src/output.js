@@ -83,6 +83,22 @@ class Output_Helper {
 	}
 
 	/**
+	 * Writes a message with a yellow warning tag (note no new line is passed by
+	 * default).
+	 *
+	 * @param {String} message - A string to be output after the warning tag
+	 */
+	static warn(message) {
+		message = `${Yellow}[WARN]${Reset} ${sanitise(message)}\n`;
+
+		if (process.env.logging) {
+			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
+
+			process.stdout.write(message);
+		}
+	}
+
+	/**
 	 * Outputs all of a string in red.
 	 *
 	 * @param {String} message - String to be output

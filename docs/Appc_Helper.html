@@ -151,7 +151,7 @@ CLI interactions.
     
 
     
-    <h4 class="name" id=".build"><span class="type-signature">(static) </span>build<span class="signature">(dir, platform, args)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".build"><span class="type-signature">(static) </span>build<span class="signature">(dir, platform, opts)</span><span class="type-signature"></span></h4>
     
 
     
@@ -242,13 +242,55 @@ specify their own arguments.
 
         <tr>
             
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional arguments
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
                 <td class="name"><code>args</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array</span>
+<span class="param-type">Array.&lt;String></span>
 
 
             
@@ -259,6 +301,36 @@ specify their own arguments.
             
 
             <td class="description last">Any additional arguments to be passed to the command</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ti</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether or not to use the titanium CLI</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -299,7 +371,7 @@ specify their own arguments.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line199">line 199</a>
+        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line215">line 215</a>
     </li></ul></dd>
     
 
@@ -482,7 +554,7 @@ specify their own arguments.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line289">line 289</a>
+        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line305">line 305</a>
     </li></ul></dd>
     
 
@@ -578,7 +650,125 @@ specify their own arguments.
 
             
 
-            <td class="description last">The details for the Appcelerator run</td>
+            <td class="description last">The details for the Appcelerator run
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>cli</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The version of the CLI to install</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>username</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The username to authenticate with</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The password to authenticate with</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>organisation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The relevant org ID to log in to</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -619,7 +809,7 @@ specify their own arguments.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line149">line 149</a>
+        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line163">line 163</a>
     </li></ul></dd>
     
 
@@ -655,7 +845,7 @@ specify their own arguments.
     
 
     
-    <h4 class="name" id=".installSDK"><span class="type-signature">(static) </span>installSDK<span class="signature">(appc)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".installSDK"><span class="type-signature">(static) </span>installSDK<span class="signature">(appc, opts)</span><span class="type-signature"></span></h4>
     
 
     
@@ -717,7 +907,220 @@ of it.
 
             
 
-            <td class="description last">The details for the Appcelerator run</td>
+            <td class="description last">The details for the Appcelerator run
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sdk</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The version or branch of the SDK to install</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>username</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The username to authenticate with</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The password to authenticate with</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>organisation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The relevant org ID to log in to</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional arguments
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;String></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Any additional arguments to be passed to the command</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ti</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether or not to use the titanium CLI</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -758,7 +1161,7 @@ of it.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line52">line 52</a>
+        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -854,7 +1257,102 @@ of it.
 
             
 
-            <td class="description last">The details for the Appcelerator run</td>
+            <td class="description last">The details for the Appcelerator run
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>username</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The username to authenticate with</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The password to authenticate with</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>organisation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The relevant org ID to log in to</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -918,7 +1416,7 @@ of it.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line24">line 24</a>
+        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -954,7 +1452,7 @@ of it.
     
 
     
-    <h4 class="name" id=".runner"><span class="type-signature">(static) </span>runner<span class="signature">(args, matcher)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".runner"><span class="type-signature">(static) </span>runner<span class="signature">(args, opts)</span><span class="type-signature"></span></h4>
     
 
     
@@ -1022,6 +1520,48 @@ specify their own arguments
 
         <tr>
             
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional arguments
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
                 <td class="name"><code>matcher</code></td>
             
 
@@ -1039,6 +1579,59 @@ specify their own arguments
             
 
             <td class="description last">A function that can be used to resolve</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ti</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether or not to use the titanium CLI</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>proc</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Custom name for the global, if empty no global will be created</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -1079,7 +1672,7 @@ specify their own arguments
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line321">line 321</a>
+        <a href="src_appcelerator.js.html">src/appcelerator.js</a>, <a href="src_appcelerator.js.html#line340">line 340</a>
     </li></ul></dd>
     
 
@@ -1131,7 +1724,7 @@ specify their own arguments
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Mon May 27 2019 15:28:30 GMT+0100 (Irish Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue Jun 04 2019 11:50:57 GMT+0100 (Irish Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

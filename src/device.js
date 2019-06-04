@@ -19,9 +19,10 @@ class Device_Helper {
 	 * Launch the emulator specified in the Test_Config.js for the current test
 	 *
 	 * @param {String} deviceName - The name of the AVD emulator used for testing
-	 * @param {String[]} args - Additional AVD arguments to boot emulator with
-	 * @param {int} firstCheck - Time until the first emulator check is made (ms)
-	 * @param {int} freqCheck - Time between the emulator checks being made (ms)
+	 * @param {Object} opts - Optional Arguments
+	 * @param {String[]} opts.args - Additional AVD arguments to boot emulator with
+	 * @param {int} opts.firstCheck - Time until the first emulator check is made (ms)
+	 * @param {int} opts.freqCheck - Time between the emulator checks being made (ms)
 	 */
 	static async launchEmu(deviceName, { args = [], firstCheck = 10000, freqCheck = 2000 } = {}) {
 		// Validate the arguments are valid

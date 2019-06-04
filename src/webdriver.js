@@ -381,8 +381,8 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} args - Arguments
-		 * @param {Boolean} args.preserve - Whether text should be corrected on Android
+		 * @param {Object} opts - Optional arguments
+		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
 		 */
 		webdriver.addPromiseMethod('elementText', (text, { preserve = false } = {}) => {
 			return driver
@@ -426,8 +426,8 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} args - Arguments
-		 * @param {Boolean} args.preserve - Whether text should be corrected on Android
+		 * @param {Object} opts - Optional arguments
+		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
 		 */
 		webdriver.addPromiseMethod('elementsText', (text, { preserve = false } = {}) => {
 			return driver
@@ -471,9 +471,9 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} args - Arguments
-		 * @param {Boolean} args.preserve - Whether text should be corrected on Android
-		 * @param {Int} args.time - How long to wait in milliseconds
+		 * @param {Object} opts - Optional arguments
+		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
+		 * @param {Int} opts.time - How long to wait in milliseconds
 		 */
 		webdriver.addPromiseMethod('waitForElementText', (text, { preserve = false, time = 1000 } = {}) => {
 			return driver
@@ -946,10 +946,10 @@ class WebDriver_Helper {
 		 *
 		 * @param {String} file - The path to the reference image
 		 * @param {String} modRoot - The path to the root of the project being tested
-		 * @param {Object} args - Arguments
-		 * @param {Float} args.thresh - Percentage fault value for image matching likeness
-		 * @param {Boolean} args.overwrite - Whether or not to overwrite the reference image
-		 * @param {Int} args.delay - The time to wait before taking the screenshot in milliseconds
+		 * @param {Object} opts - Optional arguments
+		 * @param {Float} opts.thresh - Percentage fault value for image matching likeness
+		 * @param {Boolean} opts.overwrite - Whether or not to overwrite the reference image
+		 * @param {Int} opts.delay - The time to wait before taking the screenshot in milliseconds
 		 */
 		webdriver.addPromiseMethod('screenshotTest', async (file, modRoot, { thresh = 0.20, overwrite = false, delay = 2000 } = {}) => {
 			// return new Promise((resolve, reject) => {
@@ -1029,10 +1029,10 @@ class WebDriver_Helper {
 		 *
 		 * @param {String} file - The path to the reference image
 		 * @param {String} modRoot - The path to the root of the project being tested
-		 * @param {Object} args - Arguments
-		 * @param {Float} args.thresh - Percentage fault value for image matching likeness
-		 * @param {Boolean} args.overwrite - Whether or not to overwrite the reference image
-		 * @param {Int} args.delay - The time to wait before taking the screenshot in milliseconds
+		 * @param {Object} opts - Arguments
+		 * @param {Float} opts.thresh - Percentage fault value for image matching likeness
+		 * @param {Boolean} opts.overwrite - Whether or not to overwrite the reference image
+		 * @param {Int} opts.delay - The time to wait before taking the screenshot in milliseconds
 		 */
 		webdriver.addPromiseMethod('fullScreenshotTest', async (file, modRoot, { thresh = 0.20, overwrite = false, delay = 2000 } = {}) => {
 			await driver.sleep(delay);

@@ -19,6 +19,9 @@ class Appc_Helper {
 	 * Login to the Appcelerator CLI using the login command.
 	 *
 	 * @param {Object} appc - The details for the Appcelerator run
+	 * @param {String} appc.username - The username to authenticate with
+	 * @param {String} appc.password - The password to authenticate with
+	 * @param {String} appc.organisation - The relevant org ID to log in to
 	 * @param {String} env - The Appcelerator environment to login to.
 	 */
 	static async login(appc, env) {
@@ -48,6 +51,13 @@ class Appc_Helper {
 	 * of it.
 	 *
 	 * @param {Object} appc - The details for the Appcelerator run
+	 * @param {String} appc.sdk - The version or branch of the SDK to install
+	 * @param {String} appc.username - The username to authenticate with
+	 * @param {String} appc.password - The password to authenticate with
+	 * @param {String} appc.organisation - The relevant org ID to log in to
+	 * @param {Object} opts - Optional arguments
+	 * @param {String[]} opts.args - Any additional arguments to be passed to the command
+	 * @param {Boolean} opts.ti - Whether or not to use the titanium CLI
 	 */
 	static installSDK(appc, { args = [], ti = false } = {}) {
 		output.step(`Installing Appcelerator SDK '${appc.sdk}'`);
@@ -145,6 +155,10 @@ class Appc_Helper {
 	 * Install the latest version of the required CLI version for testing.
 	 *
 	 * @param {Object} appc - The details for the Appcelerator run
+	 * @param {String} appc.cli - The version of the CLI to install
+	 * @param {String} appc.username - The username to authenticate with
+	 * @param {String} appc.password - The password to authenticate with
+	 * @param {String} appc.organisation - The relevant org ID to log in to
 	 */
 	static async installCLI(appc) {
 		output.step(`Installing CLI Version '${appc.cli}'`);
@@ -194,7 +208,9 @@ class Appc_Helper {
 	 *
 	 * @param {String} dir - The path to the application root
 	 * @param {String} platform - The mobile OS the app is being built for
-	 * @param {Array} args - Any additional arguments to be passed to the command
+	 * @param {Object} opts - Optional arguments
+	 * @param {String[]} opts.args - Any additional arguments to be passed to the command
+	 * @param {Boolean} opts.ti - Whether or not to use the titanium CLI
 	 */
 	static build(dir, platform, { args = [], ti = false } = {}) {
 		return new Promise((resolve, reject) => {
@@ -316,9 +332,12 @@ class Appc_Helper {
 	 * specify their own arguments
 	 *
 	 * @param {String} args - Arguments to be run after calling appc
-	 * @param {function} matcher - A function that can be used to resolve
+	 * @param {Object} opts - Optional arguments
+	 * @param {function} opts.matcher - A function that can be used to resolve
+	 * @param {Boolean} opts.ti - Whether or not to use the titanium CLI
+	 * @param {String} opts.proc - Custom name for the global, if empty no global will be created
 	 */
-	static runner(args, { matcher = undefined, ti = false } = {}) {
+	static runner(args, { matcher = undefined, ti = false, proc = undefined } = {}) {
 		return new Promise((resolve, reject) => {
 
 			let cmd;
@@ -340,11 +359,14 @@ class Appc_Helper {
 
 			const prc = spawn(cmd, args);
 
+			// If this is going to be a persisting process, assign it a custom global
+			if (proc) { global[proc] = prc; }
+
 			prc.stdout.on('data', data => {
 				output.debug(data.toString());
 
 				if ((typeof matcher) === 'function' && matcher(data.toString())) {
-					return resolve(prc);
+					return resolve();
 				}
 			});
 
@@ -353,12 +375,13 @@ class Appc_Helper {
 				// Appc CLI doesn't always provide an error code on fail, so need to monitor the output and look for issues manually
 				// If statement is there so that [WARN] flags are ignored on stderr
 				if (data.toString().includes('[ERROR]')) {
-					prc.kill();
-					return reject(Error(data.toString().replace(/\W*\[ERROR\]\W*/, '')));
+					output.warn(data.toString().replace(/\W*\[ERROR\]\W*/, ''));
 				}
 			});
 
 			prc.on('exit', code => {
+				if (proc) { delete global[proc]; }
+
 				(code === 0) ? resolve() : reject(Error(`Command exited with code: ${code}`));
 			});
 		});

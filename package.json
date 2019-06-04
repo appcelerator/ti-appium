@@ -1,6 +1,6 @@
 {
   "name": "ti-appium",
-  "version": "2.2.7",
+  "version": "2.3.0",
   "description": "An Appium wrapper to test Titanium applications",
   "repository": {
     "type": "git",
@@ -20,20 +20,20 @@
   "author": "Sajoha",
   "license": "ISC",
   "dependencies": {
-    "appium": "^1.11.1",
+    "appium": "^1.13.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "fs-extra": "^2.0.0",
     "get-cursor-position": "^1.0.5",
-    "ioslib": "^2.3.0",
+    "ioslib": "^2.4.0",
     "mocha": "^5.2.0",
     "mocha-jenkins-reporter": "^0.4.1",
-    "moment-timezone": "^0.5.23",
+    "moment-timezone": "^0.5.25",
     "node-resemble-js": "^0.2.0",
     "png-crop": "0.0.2",
-    "ps-list": "^6.1.0",
+    "ps-list": "^6.3.0",
     "tiapp.xml": "^0.2.2",
-    "wd": "^1.9.0"
+    "wd": "^1.11.2"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
