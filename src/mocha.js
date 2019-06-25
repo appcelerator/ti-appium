@@ -20,7 +20,7 @@ class Mocha_Helper {
 	 */
 	static collectTests(dir) {
 		return new Promise((resolve, reject) => {
-			output.step('Fetching test files');
+			output.debug('Fetching test files');
 			// Our container for all the test files to be run
 			let tests = [];
 
@@ -41,7 +41,7 @@ class Mocha_Helper {
 
 			output.debug(`Found ${tests.length} test file(s)`);
 
-			output.finish(resolve, tests);
+			return resolve(tests);
 		});
 	}
 
@@ -100,24 +100,13 @@ class Mocha_Helper {
 				mocha.addFile(file);
 			});
 
-			// Suppress Mochas output unless user has specified logging
-			const logging = process.env.logging;
-
-			if (logging !== 'basic' && logging !== 'debug') {
-				console.log = () => {};
-			}
-
 			let tests = [];
 
-			output.info('Handing off to Mocha for testing');
+			output.debug('Handing off to Mocha for testing');
 
 			// Run the supplied test files
 			try {
 				mocha.run(() => {
-					if (logging !== 'basic' || logging !== 'debug') {
-						delete console.log;
-					}
-
 					output.debug('Tests complete, exiting Mocha');
 
 					resolve(tests);
@@ -185,7 +174,7 @@ class Mocha_Helper {
 							}
 
 						} catch (err) {
-							output.error(err);
+							output.debug(err);
 						}
 					});
 			} catch (err) {

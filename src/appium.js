@@ -110,7 +110,7 @@ class Appium_Helper {
 	 * @param {Int} opts.port - The port of the server that the Appium server is running on
 	 */
 	static async runAppium(modRoot, { hostname = 'localhost', port = 4723 } = {}) {
-		output.step(`Starting Appium Server On '${hostname}:${port}'`);
+		output.debug(`Starting Appium Server On '${hostname}:${port}'`);
 		// We only want to allow starting a server on the local machine
 		const validAddresses = [ 'localhost', '0.0.0.0', '127.0.0.1' ];
 
@@ -121,15 +121,13 @@ class Appium_Helper {
 		} else {
 			throw Error('Connecting to an External Appium Server is Not Currently Supported');
 		}
-
-		output.finish();
 	}
 
 	/**
 	 * Tells the Appium server to shut down
 	 */
 	static async quitServ() {
-		output.step('Stopping Appium Server');
+		output.debug('Stopping Appium Server');
 
 		try {
 			if (this.server) {
@@ -146,8 +144,6 @@ class Appium_Helper {
 		} catch (e) {
 			throw e;
 		}
-
-		output.finish();
 	}
 }
 

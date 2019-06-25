@@ -25,7 +25,7 @@ class Appc_Helper {
 	 * @param {String} env - The Appcelerator environment to login to.
 	 */
 	static async login(appc, env) {
-		output.step(`Logging into the Appcelerator CLI as '${appc.username}'`);
+		output.debug(`Logging into the Appcelerator CLI as '${appc.username}'`);
 
 		output.debug('Logging out of the current session');
 		await exec('appc logout');
@@ -39,8 +39,6 @@ class Appc_Helper {
 		if (loginReturn.includes('Login required to continue') || loginReturn.includes('Invalid username or password')) {
 			throw Error('Error During Appc CLI Login');
 		} else {
-			output.finish();
-
 			return;
 		}
 	}
@@ -60,7 +58,7 @@ class Appc_Helper {
 	 * @param {Boolean} opts.ti - Whether or not to use the titanium CLI
 	 */
 	static installSDK(appc, { args = [], ti = false } = {}) {
-		output.step(`Installing Appcelerator SDK '${appc.sdk}'`);
+		output.debug(`Installing Appcelerator SDK '${appc.sdk}'`);
 
 		return new Promise((resolve, reject) => {
 			// Validate the arguments are valid
@@ -142,7 +140,7 @@ class Appc_Helper {
 							exec(`appc ti sdk select ${sdk}`);
 						}
 
-						output.finish(resolve, sdk);
+						return resolve(sdk);
 					} catch (err) {
 						reject(err);
 					}
@@ -161,7 +159,7 @@ class Appc_Helper {
 	 * @param {String} appc.organisation - The relevant org ID to log in to
 	 */
 	static async installCLI(appc) {
-		output.step(`Installing CLI Version '${appc.cli}'`);
+		output.debug(`Installing CLI Version '${appc.cli}'`);
 		try {
 			output.debug('Fetching CLI version from the production environment');
 			await exec(`appc use ${appc.cli}`, {
@@ -198,8 +196,6 @@ class Appc_Helper {
 				await this.login(appc, 'production');
 			}
 		}
-
-		output.finish();
 	}
 
 	/**
@@ -375,7 +371,7 @@ class Appc_Helper {
 				// Appc CLI doesn't always provide an error code on fail, so need to monitor the output and look for issues manually
 				// If statement is there so that [WARN] flags are ignored on stderr
 				if (data.toString().includes('[ERROR]')) {
-					output.warn(data.toString().replace(/\W*\[ERROR\]\W*/, ''));
+					output.debug(data.toString().replace(/\W*\[ERROR\]\W*/, ''));
 				}
 			});
 

@@ -1,7 +1,6 @@
 'use strict';
 
 const
-	path = require('path'),
 	mocha = require('./src/mocha.js'),
 	output = require('./src/output.js');
 
@@ -188,8 +187,6 @@ exports.startClient = require('./src/appium.js').startClient;
  */
 exports.test = async (dir, modRoot) => {
 	try {
-		output.banner(`Running test directory ${path.basename(dir)}`);
-
 		let tests = await mocha.collectTests(dir);
 
 		// Break here if no tests are defined

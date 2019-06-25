@@ -27,11 +27,9 @@ class Output_Helper {
 			message = `${message}\n`;
 		}
 
-		if (process.env.logging) {
-			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
+		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
-			process.stdout.write(message);
-		}
+		process.stdout.write(message);
 	}
 
 	/**
@@ -41,7 +39,7 @@ class Output_Helper {
 	 * @param {Object} value - An object to be returned with resolve
 	 */
 	static finish(done, value) {
-		if (process.env.logging === 'basic') {
+		if (process.env.logging !== 'debug') {
 			process.stdout.write(`${Green}Done${Reset}\n`);
 		}
 
@@ -57,7 +55,7 @@ class Output_Helper {
 	 * @param {Object} value - An object to be returned with resolve
 	 */
 	static skip(done, value) {
-		if (process.env.logging === 'basic') {
+		if (process.env.logging !== 'debug') {
 			process.stdout.write(`${Yellow}Skipping${Reset}\n`);
 		}
 
@@ -75,11 +73,9 @@ class Output_Helper {
 	static info(message) {
 		message = `${Green}[INFO]${Reset} ${sanitise(message)}\n`;
 
-		if (process.env.logging) {
-			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
+		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
-			process.stdout.write(message);
-		}
+		process.stdout.write(message);
 	}
 
 	/**
@@ -91,11 +87,9 @@ class Output_Helper {
 	static warn(message) {
 		message = `${Yellow}[WARN]${Reset} ${sanitise(message)}\n`;
 
-		if (process.env.logging) {
-			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
+		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
-			process.stdout.write(message);
-		}
+		process.stdout.write(message);
 	}
 
 	/**
@@ -106,11 +100,9 @@ class Output_Helper {
 	static error(message) {
 		message = `${Red}[ERROR] ${sanitise(message)}${Reset}\n`;
 
-		if (process.env.logging) {
-			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
+		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
-			process.stdout.write(message);
-		}
+		process.stdout.write(message);
 	}
 
 	/**
@@ -119,13 +111,11 @@ class Output_Helper {
 	 * @param {String} message - String to be enclosed by the banner
 	 */
 	static banner(message) {
-		if (process.env.logging) {
-			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
+		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
 
-			process.stdout.write('\n-------------------------------------------------------\n');
-			process.stdout.write(`${Green}[INFO]${Reset} ${message}\n`);
-			process.stdout.write('-------------------------------------------------------\n');
-		}
+		process.stdout.write('\n-------------------------------------------------------\n');
+		process.stdout.write(`${Green}[INFO]${Reset} ${message}\n`);
+		process.stdout.write('-------------------------------------------------------\n');
 	}
 
 	/**
