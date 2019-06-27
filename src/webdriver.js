@@ -217,7 +217,7 @@ class WebDriver_Helper {
 		 *															 term.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementClassName', (elementType, time) => {
+		webdriver.addPromiseMethod('waitForElementClassName', (elementType, time = 1000) => {
 			return driver
 				.getPlatform()
 				.then(platform => {
@@ -293,7 +293,7 @@ class WebDriver_Helper {
 		 * @param {Int} position - The position in the array of matching XPath items.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementXPath', (elementType, id, position, time) => {
+		webdriver.addPromiseMethod('waitForElementXPath', (elementType, id, position, time = 1000) => {
 			return driver
 				.getPlatform()
 				.then(platform => {
@@ -360,7 +360,7 @@ class WebDriver_Helper {
 		 * @param {String} element - The element ID used to identify the element.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementId', (element, time) => {
+		webdriver.addPromiseMethod('waitForElementId', (element, time = 1000) => {
 			return driver
 				.getPlatform()
 				.then(platform => {
@@ -381,10 +381,8 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
 		 */
-		webdriver.addPromiseMethod('elementText', (text, { preserve = false } = {}) => {
+		webdriver.addPromiseMethod('elementText', (text) => {
 			return driver
 				.sessions()
 				.then(sessions => {
@@ -393,27 +391,6 @@ class WebDriver_Helper {
 							return driver.elementById(text);
 
 						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
-
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
 							return driver.elementByAndroidUIAutomator(`new UiSelector().text("${text}")`);
 					}
 				});
@@ -426,10 +403,8 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
 		 */
-		webdriver.addPromiseMethod('elementsText', (text, { preserve = false } = {}) => {
+		webdriver.addPromiseMethod('elementsText', (text) => {
 			return driver
 				.sessions()
 				.then(sessions => {
@@ -438,27 +413,6 @@ class WebDriver_Helper {
 							return driver.elementsById(text);
 
 						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
-
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
 							return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
 					}
 				});
@@ -471,11 +425,9 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
-		 * @param {Int} opts.time - How long to wait in milliseconds
+		 * @param {Int} time - How long to wait in milliseconds
 		 */
-		webdriver.addPromiseMethod('waitForElementText', (text, { preserve = false, time = 1000 } = {}) => {
+		webdriver.addPromiseMethod('waitForElementText', (text, time = 1000) => {
 			return driver
 				.sessions()
 				.then(sessions => {
@@ -484,27 +436,6 @@ class WebDriver_Helper {
 							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
 
 						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
-
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
 							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
 					}
 				});
@@ -988,7 +919,7 @@ class WebDriver_Helper {
 					const elements = await driver.elementsById('decor_content_parent');
 
 					if (elements.length > 0) {
-					// Get the size of the window frame
+						// Get the size of the window frame
 						const bounds = await driver
 							.elementById('decor_content_parent')
 							.getBounds();
@@ -1001,7 +932,7 @@ class WebDriver_Helper {
 						};
 
 						try {
-						// Take the screenshot
+							// Take the screenshot
 							const screenshot = await driver.takeScreenshot();
 							return processImg(file, modRoot, screenshot, thresh, overwrite, dimensions);
 						} catch (e) {
@@ -1009,7 +940,7 @@ class WebDriver_Helper {
 						}
 					} else {
 						try {
-						// Take the screenshot
+							// Take the screenshot
 							const screenshot = await driver.takeScreenshot();
 							return processImg(file, modRoot, screenshot, thresh, overwrite);
 						} catch (e) {
