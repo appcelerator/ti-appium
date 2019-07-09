@@ -53,6 +53,15 @@ exports.error = output.error;
 exports.debug = output.debug;
 
 /**
+ * @function warn
+ * @desc
+ * Outputs a message when the warn flag is used.
+ *
+ * @param {String} message - String to be output
+ */
+exports.warn = output.warn;
+
+/**
  * @function banner
  * @desc
  * Creates a banner and a green info tag around a message.
