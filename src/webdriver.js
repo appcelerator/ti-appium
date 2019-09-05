@@ -107,7 +107,7 @@ class WebDriver_Helper {
 
 						case 'Android':
 							return driver
-								.elementsText('OK')
+								.elementsText('OK', { preserve: true })
 								.then(elements => {
 									if (elements.length === 0) {
 										return driver
@@ -115,7 +115,7 @@ class WebDriver_Helper {
 											.sleep(500);
 									} else {
 										return driver
-											.elementText('OK')
+											.elementText('OK', { preserve: true })
 											.click()
 											.sleep(500);
 									}
@@ -988,7 +988,7 @@ class WebDriver_Helper {
 					const elements = await driver.elementsById('decor_content_parent');
 
 					if (elements.length > 0) {
-					// Get the size of the window frame
+						// Get the size of the window frame
 						const bounds = await driver
 							.elementById('decor_content_parent')
 							.getBounds();
@@ -1001,7 +1001,7 @@ class WebDriver_Helper {
 						};
 
 						try {
-						// Take the screenshot
+							// Take the screenshot
 							const screenshot = await driver.takeScreenshot();
 							return processImg(file, modRoot, screenshot, thresh, overwrite, dimensions);
 						} catch (e) {
@@ -1009,7 +1009,7 @@ class WebDriver_Helper {
 						}
 					} else {
 						try {
-						// Take the screenshot
+							// Take the screenshot
 							const screenshot = await driver.takeScreenshot();
 							return processImg(file, modRoot, screenshot, thresh, overwrite);
 						} catch (e) {

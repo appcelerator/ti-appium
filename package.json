@@ -1,6 +1,6 @@
 {
   "name": "ti-appium",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "An Appium wrapper to test Titanium applications",
   "repository": {
     "type": "git",
@@ -33,11 +33,11 @@
     "png-crop": "0.0.2",
     "ps-list": "^6.3.0",
     "tiapp.xml": "^0.2.2",
-    "wd": "^1.11.2"
+    "wd": "^1.11.4"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-config-axway": "^2.0.14",
-    "jsdoc": "^3.6.2"
+    "jsdoc": "^3.6.3"
   }
 }
