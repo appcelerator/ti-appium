@@ -938,6 +938,42 @@ class WebDriver_Helper {
 		});
 
 		/**
+		 * @function getDensity
+		 * @desc
+		 * Used for finding the screen density of Android devices
+		 * @memberof WebDriverCommands
+		 */
+		webdriver.addPromiseMethod('getDensity', async () => {
+			const session = await driver.sessionCapabilities();
+
+			switch (session.platformName) {
+				case 'Android':
+					switch (session.deviceScreenDensity) {
+						case 120:
+							return 0.75;
+
+						case 160:
+							return 1;
+
+						case 240:
+							return 1.5;
+
+						case 320:
+							return 2;
+
+						case 480:
+							return 3;
+
+						default:
+							return 1;
+					}
+
+				default:
+					return 1;
+			}
+		});
+
+		/**
 		 * @function screenshotTest
 		 * @desc
 		 * Take a screenshot on the device, and then compare it to a reference
@@ -959,29 +995,41 @@ class WebDriver_Helper {
 
 			switch (platform) {
 				case 'iOS':
-				// Get the size of the window frame
-					const winVal = await driver
-						.elementByClassName('XCUIElementTypeApplication')
-						.getBounds();
+					const statusBar = await driver.elementsByClassName('XCUIElementTypeStatusBar');
 
-					// Get the size of the status bar
-					const statusVal = await driver
-						.elementByClassName('XCUIElementTypeStatusBar')
-						.getBounds();
+					if (statusBar.length > 0) {
+					// Get the size of the window frame
+						const winVal = await driver
+							.elementByClassName('XCUIElementTypeApplication')
+							.getBounds();
 
-					// Create the config for PNGCrop to use
-					const dimensions = {
-						height: (winVal.height * 2),
-						width: (winVal.width * 2),
-						top: (statusVal.height * 2)
-					};
+						// Get the size of the status bar
+						const statusVal = await driver
+							.elementByClassName('XCUIElementTypeStatusBar')
+							.getBounds();
 
-					try {
-					// Take the screenshot
-						const screenshot = await driver.takeScreenshot();
-						return processImg(file, modRoot, screenshot, thresh, overwrite, dimensions);
-					} catch (e) {
-						throw e;
+						// Create the config for PNGCrop to use
+						const dimensions = {
+							height: (winVal.height * 2),
+							width: (winVal.width * 2),
+							top: (statusVal.height * 2)
+						};
+
+						try {
+						// Take the screenshot
+							const screenshot = await driver.takeScreenshot();
+							return processImg(file, modRoot, screenshot, thresh, overwrite, dimensions);
+						} catch (e) {
+							throw e;
+						}
+					} else {
+						try {
+						// Take the screenshot
+							const screenshot = await driver.takeScreenshot();
+							return processImg(file, modRoot, screenshot, thresh, overwrite);
+						} catch (e) {
+							throw e;
+						}
 					}
 
 				case 'Android':
