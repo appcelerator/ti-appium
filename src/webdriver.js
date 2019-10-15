@@ -995,41 +995,24 @@ class WebDriver_Helper {
 
 			switch (platform) {
 				case 'iOS':
-					const statusBar = await driver.elementsByClassName('XCUIElementTypeStatusBar');
+				// Get the size of the window frame
+					const winVal = await driver
+						.elementByClassName('XCUIElementTypeApplication')
+						.getBounds();
 
-					if (statusBar.length > 0) {
-					// Get the size of the window frame
-						const winVal = await driver
-							.elementByClassName('XCUIElementTypeApplication')
-							.getBounds();
+					// Create the config for PNGCrop to use
+					const dimensions = {
+						height: (winVal.height * 2),
+						width: (winVal.width * 2),
+						top: 40
+					};
 
-						// Get the size of the status bar
-						const statusVal = await driver
-							.elementByClassName('XCUIElementTypeStatusBar')
-							.getBounds();
-
-						// Create the config for PNGCrop to use
-						const dimensions = {
-							height: (winVal.height * 2),
-							width: (winVal.width * 2),
-							top: (statusVal.height * 2)
-						};
-
-						try {
-						// Take the screenshot
-							const screenshot = await driver.takeScreenshot();
-							return processImg(file, modRoot, screenshot, thresh, overwrite, dimensions);
-						} catch (e) {
-							throw e;
-						}
-					} else {
-						try {
-						// Take the screenshot
-							const screenshot = await driver.takeScreenshot();
-							return processImg(file, modRoot, screenshot, thresh, overwrite);
-						} catch (e) {
-							throw e;
-						}
+					try {
+					// Take the screenshot
+						const screenshot = await driver.takeScreenshot();
+						return processImg(file, modRoot, screenshot, thresh, overwrite, dimensions);
+					} catch (e) {
+						throw e;
 					}
 
 				case 'Android':
