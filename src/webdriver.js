@@ -324,7 +324,7 @@ class WebDriver_Helper {
 							return driver.elementById(element);
 
 						case 'Android':
-							return driver.elementByAccessibilityId(`${element}.`);
+							return driver.elementByAccessibilityId(element);
 					}
 				});
 		});
@@ -346,7 +346,7 @@ class WebDriver_Helper {
 							return driver.elementsById(element);
 
 						case 'Android':
-							return driver.elementsByAccessibilityId(`${element}.`);
+							return driver.elementsByAccessibilityId(element);
 					}
 				});
 		});
@@ -369,7 +369,7 @@ class WebDriver_Helper {
 							return driver.waitForElementById(element, webdriver.asserters.isDisplayed, time);
 
 						case 'Android':
-							return driver.waitForElementByAccessibilityId(`${element}.`, webdriver.asserters.isDisplayed, time);
+							return driver.waitForElementByAccessibilityId(element, webdriver.asserters.isDisplayed, time);
 					}
 				});
 		});
@@ -931,16 +931,11 @@ class WebDriver_Helper {
 						.elementByClassName('XCUIElementTypeApplication')
 						.getBounds();
 
-					// Get the size of the status bar
-					const statusVal = await driver
-						.elementByClassName('XCUIElementTypeStatusBar')
-						.getBounds();
-
 					// Create the config for PNGCrop to use
 					const dimensions = {
 						height: (winVal.height * 2),
 						width: (winVal.width * 2),
-						top: (statusVal.height * 2)
+						top: 40
 					};
 
 					try {
