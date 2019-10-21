@@ -245,65 +245,11 @@ class WebDriver_Helper {
 		 *															 term.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementClassName', (elementType, time) => {
+		webdriver.addPromiseMethod('waitForElementClassName', (elementType, time = 1000) => {
 			return driver
 				.getPlatform()
 				.then(platform => {
 					return driver.waitForElementByClassName(getElement(elementType, platform), webdriver.asserters.isDisplayed, time);
-				});
-		});
-
-		/**
-		 * @function elementXPath
-		 * @desc
-		 * Return an element, by its platform specific XPath.
-		 * @memberof WebDriverCommands
-		 * @deprecated
-		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
-		 */
-		webdriver.addPromiseMethod('elementXPath', (elementType, id, position) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.elementByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`);
-
-						case 'Android':
-							return driver.elementByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`);
-					}
-				});
-		});
-
-		/**
-		 * @function elementsXPath
-		 * @desc
-		 * Count the number of elements, by its platform specific XPath.
-		 * @memberof WebDriverCommands
-		 * @deprecated
-		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
-		 */
-		webdriver.addPromiseMethod('elementsXPath', (elementType, id, position) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.elementsByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`);
-
-						case 'Android':
-							return driver.elementsByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`);
-					}
 				});
 		});
 
@@ -314,25 +260,11 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 * @deprecated
 		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
+		 * @param {String} xpath - the xpath value of the element
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementXPath', (elementType, id, position, time) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.waitForElementByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`, webdriver.asserters.isDisplayed, time);
-
-						case 'Android':
-							return driver.waitForElementByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`, webdriver.asserters.isDisplayed, time);
-					}
-				});
+		webdriver.addPromiseMethod('waitForElementXPath', (xpath, time = 1000) => {
+			return driver.waitForElementByXPath(xpath, webdriver.asserters.isDisplayed, time);
 		});
 
 		/**
@@ -352,7 +284,7 @@ class WebDriver_Helper {
 							return driver.elementById(element);
 
 						case 'Android':
-							return driver.elementByAccessibilityId(`${element}.`);
+							return driver.elementByAccessibilityId(element);
 					}
 				});
 		});
@@ -374,7 +306,7 @@ class WebDriver_Helper {
 							return driver.elementsById(element);
 
 						case 'Android':
-							return driver.elementsByAccessibilityId(`${element}.`);
+							return driver.elementsByAccessibilityId(element);
 					}
 				});
 		});
@@ -388,7 +320,7 @@ class WebDriver_Helper {
 		 * @param {String} element - The element ID used to identify the element.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementId', (element, time) => {
+		webdriver.addPromiseMethod('waitForElementId', (element, time = 1000) => {
 			return driver
 				.getPlatform()
 				.then(platform => {
@@ -397,7 +329,7 @@ class WebDriver_Helper {
 							return driver.waitForElementById(element, webdriver.asserters.isDisplayed, time);
 
 						case 'Android':
-							return driver.waitForElementByAccessibilityId(`${element}.`, webdriver.asserters.isDisplayed, time);
+							return driver.waitForElementByAccessibilityId(element, webdriver.asserters.isDisplayed, time);
 					}
 				});
 		});
@@ -409,10 +341,8 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
 		 */
-		webdriver.addPromiseMethod('elementText', (text, { preserve = false } = {}) => {
+		webdriver.addPromiseMethod('elementText', (text) => {
 			return driver
 				.sessions()
 				.then(sessions => {
@@ -421,27 +351,6 @@ class WebDriver_Helper {
 							return driver.elementById(text);
 
 						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
-
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
 							return driver.elementByAndroidUIAutomator(`new UiSelector().text("${text}")`);
 					}
 				});
@@ -454,10 +363,8 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
 		 */
-		webdriver.addPromiseMethod('elementsText', (text, { preserve = false } = {}) => {
+		webdriver.addPromiseMethod('elementsText', (text) => {
 			return driver
 				.sessions()
 				.then(sessions => {
@@ -466,27 +373,6 @@ class WebDriver_Helper {
 							return driver.elementsById(text);
 
 						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
-
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
 							return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
 					}
 				});
@@ -499,11 +385,9 @@ class WebDriver_Helper {
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
-		 * @param {Int} opts.time - How long to wait in milliseconds
+		 * @param {Int} time - How long to wait in milliseconds
 		 */
-		webdriver.addPromiseMethod('waitForElementText', (text, { preserve = false, time = 1000 } = {}) => {
+		webdriver.addPromiseMethod('waitForElementText', (text, time = 1000) => {
 			return driver
 				.sessions()
 				.then(sessions => {
@@ -512,27 +396,6 @@ class WebDriver_Helper {
 							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
 
 						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
-
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
 							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
 					}
 				});
@@ -966,6 +829,42 @@ class WebDriver_Helper {
 		});
 
 		/**
+		 * @function getDensity
+		 * @desc
+		 * Used for finding the screen density of Android devices
+		 * @memberof WebDriverCommands
+		 */
+		webdriver.addPromiseMethod('getDensity', async () => {
+			const session = await driver.sessionCapabilities();
+
+			switch (session.platformName) {
+				case 'Android':
+					switch (session.deviceScreenDensity) {
+						case 120:
+							return 0.75;
+
+						case 160:
+							return 1;
+
+						case 240:
+							return 1.5;
+
+						case 320:
+							return 2;
+
+						case 480:
+							return 3;
+
+						default:
+							return 1;
+					}
+
+				default:
+					return 1;
+			}
+		});
+
+		/**
 		 * @function screenshotTest
 		 * @desc
 		 * Take a screenshot on the device, and then compare it to a reference
@@ -992,16 +891,11 @@ class WebDriver_Helper {
 						.elementByClassName('XCUIElementTypeApplication')
 						.getBounds();
 
-					// Get the size of the status bar
-					const statusVal = await driver
-						.elementByClassName('XCUIElementTypeStatusBar')
-						.getBounds();
-
 					// Create the config for PNGCrop to use
 					const dimensions = {
 						height: (winVal.height * 2),
 						width: (winVal.width * 2),
-						top: (statusVal.height * 2)
+						top: 40
 					};
 
 					try {
@@ -1016,7 +910,7 @@ class WebDriver_Helper {
 					const elements = await driver.elementsById('decor_content_parent');
 
 					if (elements.length > 0) {
-					// Get the size of the window frame
+						// Get the size of the window frame
 						const bounds = await driver
 							.elementById('decor_content_parent')
 							.getBounds();
@@ -1029,7 +923,7 @@ class WebDriver_Helper {
 						};
 
 						try {
-						// Take the screenshot
+							// Take the screenshot
 							const screenshot = await driver.takeScreenshot();
 							return processImg(file, modRoot, screenshot, thresh, overwrite, dimensions);
 						} catch (e) {
@@ -1037,7 +931,7 @@ class WebDriver_Helper {
 						}
 					} else {
 						try {
-						// Take the screenshot
+							// Take the screenshot
 							const screenshot = await driver.takeScreenshot();
 							return processImg(file, modRoot, screenshot, thresh, overwrite);
 						} catch (e) {
@@ -1311,7 +1205,7 @@ function getElement(elementType, platform) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.2</a> on Tue Jul 09 2019 10:06:40 GMT+0100 (Irish Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Oct 21 2019 15:14:45 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

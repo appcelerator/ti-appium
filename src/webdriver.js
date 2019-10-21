@@ -226,85 +226,17 @@ class WebDriver_Helper {
 		});
 
 		/**
-		 * @function elementXPath
-		 * @desc
-		 * Return an element, by its platform specific XPath.
-		 * @memberof WebDriverCommands
-		 * @deprecated
-		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
-		 */
-		webdriver.addPromiseMethod('elementXPath', (elementType, id, position) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.elementByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`);
-
-						case 'Android':
-							return driver.elementByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`);
-					}
-				});
-		});
-
-		/**
-		 * @function elementsXPath
-		 * @desc
-		 * Count the number of elements, by its platform specific XPath.
-		 * @memberof WebDriverCommands
-		 * @deprecated
-		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
-		 */
-		webdriver.addPromiseMethod('elementsXPath', (elementType, id, position) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.elementsByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`);
-
-						case 'Android':
-							return driver.elementsByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`);
-					}
-				});
-		});
-
-		/**
 		 * @function waitForElementXPath
 		 * @desc
 		 * Return an element, by its platform specific XPath, but allow wait.
 		 * @memberof WebDriverCommands
 		 * @deprecated
 		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
+		 * @param {String} xpath - the xpath value of the element
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementXPath', (elementType, id, position, time = 1000) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.waitForElementByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`, webdriver.asserters.isDisplayed, time);
-
-						case 'Android':
-							return driver.waitForElementByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`, webdriver.asserters.isDisplayed, time);
-					}
-				});
+		webdriver.addPromiseMethod('waitForElementXPath', (xpath, time = 1000) => {
+			return driver.waitForElementByXPath(xpath, webdriver.asserters.isDisplayed, time);
 		});
 
 		/**
