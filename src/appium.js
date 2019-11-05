@@ -74,8 +74,10 @@ class Appium_Helper {
 	/**
 	 * Stops the WD session, but first it closes and removes the app from the
 	 * device in an attempt to save storage space.
+	 *
+	 * @param {Boolean} softStop - Whether or not to remove the app on stopping
 	 */
-	static async stopClient() {
+	static async stopClient(softStop = false) {
 		output.debug('Stopping WebDriver Instance');
 
 		const driver = global.driver;
@@ -88,9 +90,11 @@ class Appium_Helper {
 			output.debug('Closing the application');
 			await driver.closeApp();
 
-			if (platform === 'Android' || platform === 'iOS') {
-				output.debug('Removing the app from device');
-				await driver.removeApp((platform === 'iOS') ? capabilities.CFBundleIdentifier : capabilities.desired.appPackage);
+			if (!softStop) {
+				if (platform === 'Android' || platform === 'iOS') {
+					output.debug('Removing the app from device');
+					await driver.removeApp((platform === 'iOS') ? capabilities.CFBundleIdentifier : capabilities.desired.appPackage);
+				}
 			}
 
 			output.debug('Exiting the WebDriver session');
