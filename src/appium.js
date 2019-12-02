@@ -101,6 +101,7 @@ class Appium_Helper {
 			await driver.quit();
 
 			delete global.driver;
+			delete global.webdriver;
 		}
 	}
 

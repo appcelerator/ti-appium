@@ -27,8 +27,6 @@ class Output_Helper {
 			message = `${message}\n`;
 		}
 
-		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write(message);
 	}
 
@@ -73,8 +71,6 @@ class Output_Helper {
 	static info(message) {
 		message = `${Green}[INFO]${Reset} ${sanitise(message)}\n`;
 
-		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write(message);
 	}
 
@@ -87,8 +83,6 @@ class Output_Helper {
 	static warn(message) {
 		message = `${Yellow}[WARN]${Reset} ${sanitise(message)}\n`;
 
-		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write(message);
 	}
 
@@ -100,8 +94,6 @@ class Output_Helper {
 	static error(message) {
 		message = `${Red}[ERROR] ${sanitise(message)}${Reset}\n`;
 
-		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write(message);
 	}
 
@@ -111,8 +103,6 @@ class Output_Helper {
 	 * @param {String} message - String to be enclosed by the banner
 	 */
 	static banner(message) {
-		getPos() && process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write('\n-------------------------------------------------------\n');
 		process.stdout.write(`${Green}[INFO]${Reset} ${message}\n`);
 		process.stdout.write('-------------------------------------------------------\n');
@@ -127,8 +117,6 @@ class Output_Helper {
 		message = `${Grey}[DEBUG] ${sanitise(message)}${Reset}\n`;
 
 		if (process.env.logging === 'debug') {
-			getPos() && process.stdout.write('\n'); // Move down a line if interrupting
-
 			process.stdout.write(message);
 		}
 	}
@@ -155,22 +143,6 @@ function sanitise(message) {
 		}
 
 		return message;
-	}
-}
-
-/**
- * Return a boolean based on whether or not the cursor is mid line
- * @private
- */
-function getPos() {
-	try {
-		if (require('get-cursor-position').sync().col > 1) {
-			return true;
-		} else {
-			return false;
-		}
-	} catch (e) {
-		return false;
 	}
 }
 
