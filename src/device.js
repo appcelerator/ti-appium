@@ -55,7 +55,7 @@ class Device_Helper {
 				cmdArgs = cmdArgs.concat(args);
 			}
 
-			childProcess.spawn(cmd, cmdArgs);
+			childProcess.spawn(cmd, cmdArgs, {shell: true});
 
 			await checkBooted('emulator', firstCheck, freqCheck);
 		}
@@ -210,10 +210,17 @@ class Device_Helper {
  */
 async function getAndroidPID(deviceName) {
 	try {
-		const
-			list = await ps(),
-			proc = list.find(x => x.cmd.includes(deviceName)),
+		const list = await ps();
+
+		let pid;
+
+		if(process.platform === 'win32') {
+			const proc = list.find(x => x.name.includes('qemu-system-x86_64.exe'));
 			pid = proc.pid;
+		}  else {
+			const proc = list.find(x => x.cmd.includes(deviceName));
+			pid = proc.pid;
+		}
 
 		return pid;
 	} catch (err) {
