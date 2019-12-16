@@ -123,14 +123,14 @@ class Mocha_Helper {
 								// Check if the ticket is already in the array
 								if (index >= 0) {
 									// Add the skip message onto the object
-									tests[index].errors.push(data.title.replace(/\\/g, '').replace(/"/g, '\''));
+									tests[index].errors.push(data.title.replace(/\\/g, '').replace(/"/g, '\'').replace(/\n/, ''));
 								} else {
 									// If a ticket object isn't already in the array, create it
 									test = {
 										state: 3,
 										name: data.title,
 										fileName: fileName,
-										errors: [ data.title.replace(/\\/g, '').replace(/"/g, '\'') ]
+										errors: [ data.title.replace(/\\/g, '').replace(/"/g, '\'').replace(/\n/, '') ]
 									};
 								}
 							} else if (data.state === 'passed') {
@@ -151,7 +151,7 @@ class Mocha_Helper {
 								}
 							} else if (data.state === 'failed') {
 								// Create a message to be attatched to the ticket
-								let failMessage = `[TEST STEP] ${data.title.replace(/"/g, '\'')}\\n[RESULT] ${data.err.message.replace(/\\/g, '').replace(/"/g, '\'')}`;
+								let failMessage = `[TEST STEP] ${data.title.replace(/"/g, '\'')}\\n[RESULT] ${data.err.message.replace(/\\/g, '').replace(/"/g, '\'').replace(/\n/, '')}`;
 								// Check if the ticket is already in the array
 								if (index >= 0) {
 									// Change the state of the test to a failure
