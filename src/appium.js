@@ -20,55 +20,54 @@ class Appium_Helper {
 	 *
 	 * @param {Object} capabilities - Desired capabilities for Appium to run with
 	 */
-	static startClient(capabilities) {
-		return new Promise(async (resolve, reject) => {
-			output.debug('Starting WebDriver Instance');
+	static async startClient(capabilities) {
+		output.debug('Starting WebDriver Instance');
 
-			if (!capabilities.automationName) {
-				switch (capabilities.platformName) {
-					case 'iOS':
-						capabilities.automationName = 'XCUITest';
-						break;
+		if (!capabilities.automationName) {
+			switch (capabilities.platformName) {
+				case 'iOS':
+					capabilities.automationName = 'XCUITest';
+					break;
 
-					case 'Android':
-						capabilities.automationName = 'UiAutomator2';
-						break;
+				case 'Android':
+					capabilities.automationName = 'UiAutomator2';
+					break;
 
-					default:
-						capabilities.automationName = 'Appium';
-						break;
-				}
+				default:
+					capabilities.automationName = 'Appium';
+					break;
 			}
+		}
 
-			if (!capabilities.deviceReadyTimeout && capabilities.platformName === 'Android') {
-				capabilities.deviceReadyTimeout = 60;
-			}
+		if (!capabilities.deviceReadyTimeout && capabilities.platformName === 'Android') {
+			capabilities.deviceReadyTimeout = 60;
+		}
 
-			// Sets the amount of time Appium waits before shutting down in the background
-			if (!capabilities.newCommandTimeout) {
-				capabilities.newCommandTimeout = (60 * 10);
-			}
+		// Sets the amount of time Appium waits before shutting down in the background
+		if (!capabilities.newCommandTimeout) {
+			capabilities.newCommandTimeout = (60 * 10);
+		}
 
-			// Enabling chai assertion style: https://www.npmjs.com/package/chai-as-promised#node
-			chai.use(chaiAsPromised);
-			chai.should();
+		// Enabling chai assertion style: https://www.npmjs.com/package/chai-as-promised#node
+		chai.use(chaiAsPromised);
+		chai.should();
 
-			// Enables chai assertion chaining
-			chaiAsPromised.transferPromiseness = wd.transferPromiseness;
+		// Enables chai assertion chaining
+		chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
-			// Establish the testing driver
-			let driver = wd.promiseChainRemote({ host: this.host, port: this.port });
+		// Establish the testing driver
+		let driver = wd.promiseChainRemote({ host: 'localhost', port: 4723 });
 
-			// Make sure to include the custom commands defined in the WebDriver Helper
-			webdriver.loadDriverCommands(driver, wd);
+		// Make sure to include the custom commands defined in the WebDriver Helper
+		webdriver.loadDriverCommands(driver, wd);
 
-			global.driver = driver;
-			global.webdriver = wd;
+		global.driver = driver;
+		global.webdriver = wd;
 
-			driver.init(capabilities, err => {
-				(err) ? reject(err) : resolve();
-			});
-		});
+		await driver.init(capabilities);
+
+		// Janky fix to patch an issue with syslog not reporting on iOS tests
+		await driver.resetApp();
 	}
 
 	/**
@@ -120,7 +119,7 @@ class Appium_Helper {
 		const validAddresses = [ 'localhost', '0.0.0.0', '127.0.0.1' ];
 
 		if (validAddresses.includes(hostname)) {
-			this.server = await appium.main({ host: hostname, port: port, loglevel: 'false', defaultCapabilities: { showIOSLog: true } });
+			this.server = await appium.main({ host: hostname, port: port, loglevel: 'false' });
 			this.host = hostname;
 			this.port = port;
 		} else {

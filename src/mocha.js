@@ -50,8 +50,11 @@ class Mocha_Helper {
 	 *
 	 * @param {Array} testFiles - An array of test files for Mocha to run
 	 * @param {String} modRoot - The path to the root of the project being tested
+	 * @param {Object}  opts - Optional Arguments
+	 * @param {Int} opts.timeout  - Timeout threshold for Mocha tests
+	 * @param {Int} opts.slow - Slow threshold for Mocha tests
 	 */
-	static run(testFiles, modRoot) {
+	static run(testFiles, modRoot, { timeout = 60000, slow = 30000 } = {}) {
 		return new Promise((resolve, reject) => {
 			// Have to clear cache so that Mocha will run the same tests twice, solution taken from here https://github.com/mochajs/mocha/issues/995#issuecomment-261752316
 			Object.keys(require.cache).forEach((file) => {
@@ -77,8 +80,8 @@ class Mocha_Helper {
 			let mocha = new Mocha({
 				fullTrace: false,
 				useColors: true,
-				timeout: 180000, // Maybe this should be configurable
-				slow: 80000,
+				timeout: timeout,
+				slow: slow,
 				reporter: 'mocha-jenkins-reporter',
 				reporterOptions: {
 					junit_report_name: time,

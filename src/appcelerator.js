@@ -269,7 +269,7 @@ class Appc_Helper {
 			output.debug(`Invoking command: ${argstring}`);
 
 			// Execute the run command, and listen for events
-			const prc = spawn(cmd, cmdArgs, {shell: true});
+			const prc = spawn(cmd, cmdArgs, { shell: true });
 
 			prc.stdout.on('data', data => {
 				output.debug(data.toString());
@@ -353,7 +353,7 @@ class Appc_Helper {
 
 			output.debug(`Invoking command: ${argstring}`);
 
-			const prc = spawn(cmd, args, {shell: true});
+			const prc = spawn(cmd, args, { shell: true });
 
 			// If this is going to be a persisting process, assign it a custom global
 			if (proc) { global[proc] = prc; }

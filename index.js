@@ -193,8 +193,11 @@ exports.startClient = require('./src/appium.js').startClient;
  *
  * @param {String} dir - The directory containing the test files
  * @param {String} modRoot - The root of the project being run
+ * @param {Object}  opts - Optional Arguments
+ * @param {Int} opts.timeout  - Timeout threshold for Mocha tests
+ * @param {Int} opts.slow - Slow threshold for Mocha tests
  */
-exports.test = async (dir, modRoot) => {
+exports.test = async (dir, modRoot, { timeout = 60000, slow = 30000 } = {}) => {
 	try {
 		let tests = await mocha.collectTests(dir);
 
@@ -203,7 +206,7 @@ exports.test = async (dir, modRoot) => {
 			throw Error('No Tests Found!');
 		}
 
-		const results = await mocha.run(tests, modRoot);
+		const results = await mocha.run(tests, modRoot, { timeout: timeout, slow: slow });
 
 		return results;
 	} catch (err) {
