@@ -313,7 +313,13 @@ class Appc_Helper {
 				}
 
 			case 'android':
-				return path.join(dir, 'build', 'android', 'bin', `${appName}.apk`);
+				const sdk = require('tiapp.xml').load(path.join(dir, 'tiapp.xml')).sdkVersion;
+
+				if (sdk[0] >= 9) {
+					return path.join(dir, 'build', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk');
+				} else {
+					return path.join(dir, 'build', 'android', 'bin', `${appName}.apk`);
+				}
 
 			case 'windows':
 				return path.join(dir); // FIXME: Find Windows path
