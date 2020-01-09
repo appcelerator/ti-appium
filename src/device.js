@@ -215,7 +215,7 @@ async function getAndroidPID(deviceName) {
 		let pid;
 
 		if (process.platform === 'win32') {
-			const proc = list.find(x => x.name.includes('qemu-system-x86_64.exe'));
+			const proc = list.find(x => x.name.includes('qemu-system-x86_64'));
 			pid = proc.pid;
 		} else {
 			const proc = list.find(x => x.cmd.includes(deviceName));
