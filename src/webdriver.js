@@ -969,7 +969,7 @@ async function processImg(file, modRoot, screenshot, thresh, overwrite, dimensio
 			throw e;
 		}
 	} else {
-		if (!fs.existsSync(screenshotPath)) { throw new Error(`Reference screenshot "${path.basename(file)}" doesn't exist`); }
+		if (!fs.existsSync(file)) { throw new Error(`Reference screenshot "${path.basename(file)}" doesn't exist`); }
 
 		const elem = path.parse(screenshotPath);
 
