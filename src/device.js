@@ -1,7 +1,6 @@
 'use strict';
 
 const
-	path = require('path'),
 	ps = require('ps-list'),
 	ioslib = require('ioslib'),
 	output = require('./output.js'),
@@ -15,83 +14,6 @@ const
  * and provisioning profiles.
  */
 class Device_Helper {
-	/**
-	 * Launch the emulator specified in the Test_Config.js for the current test
-	 *
-	 * @param {String} deviceName - The name of the AVD emulator used for testing
-	 * @param {Object} opts - Optional Arguments
-	 * @param {String[]} opts.args - Additional AVD arguments to boot emulator with
-	 * @param {int} opts.firstCheck - Time until the first emulator check is made (ms)
-	 * @param {int} opts.freqCheck - Time between the emulator checks being made (ms)
-	 */
-	static async launchEmu(deviceName, { args = [], firstCheck = 10000, freqCheck = 2000 } = {}) {
-		// Validate the arguments are valid
-		if (!Array.isArray(args)) {
-			throw (new Error('Arguments must be an array'));
-		}
-
-		if (!Number.isInteger(firstCheck) || firstCheck < 0) {
-			throw (new Error('firstCheck must be a positive integer'));
-		}
-
-		if (!Number.isInteger(freqCheck) || freqCheck < 0) {
-			throw (new Error('freqCheck must be a positive integer'));
-		}
-
-		try {
-			output.debug('Checking if emulator is already booted');
-
-			await getAndroidPID(deviceName);
-		} catch (err) {
-			// Assume this is just down to no booted emulator
-
-			output.debug(`Can't find a running instance, launching Android emulator '${deviceName}'`);
-
-			let
-				cmd = path.join(process.env.ANDROID_HOME, 'emulator', 'emulator'),
-				cmdArgs = [ '-avd', deviceName, '-wipe-data' ];
-
-			if (args) {
-				cmdArgs = cmdArgs.concat(args);
-			}
-
-			childProcess.spawn(cmd, cmdArgs, { shell: true });
-
-			await checkBooted('emulator', firstCheck, freqCheck);
-		}
-
-		output.debug(`${deviceName} is booted`);
-	}
-
-	/**
-	 * Launch a Genymotion device to run tests on. The name is retrieved from the
-	 * Test_Config.js file
-	 *
-	 * @param {String} deviceName - The name of the Genymotion emulator used for
-	 *													 		testing
-	 */
-	static async launchGeny(deviceName) {
-		try {
-			output.debug('Checking if Genymotion emulator is already booted');
-
-			await getAndroidPID(deviceName);
-		} catch (err) {
-			// Assume this is just down to no booted emulator
-
-			output.debug(`Can't find a running instance, booting Genymotion emulator '${deviceName}'`);
-
-			const
-				cmd = (process.platform === 'darwin') ? path.join('/', 'Applications', 'Genymotion.app', 'Contents', 'MacOS', 'player.app', 'Contents', 'MacOS', 'player') : path.join(), // TODO: Find Windows path to player
-				args = [ '--vm-name', deviceName ];
-
-			childProcess.spawn(cmd, args, { shell: true });
-
-			await checkBooted('genymotion', 10000, 3000);
-		}
-
-		output.debug(`${deviceName} is booted`);
-	}
-
 	/**
 	 * Kill all the iOS simulators using the killall command
 	 */
@@ -226,52 +148,6 @@ async function getAndroidPID(deviceName) {
 	} catch (err) {
 		throw Error(`Cannot find an Android PID for ${deviceName}`);
 	}
-}
-
-/**
- * Validate to see if there is a process running for this emulator.
- * @private
- *
- * @param {String} platform - Device we need, supports emulator or genymotion
- * @param {int} firstCheck - Time until the first emulator check is made (ms)
- * @param {int} freqCheck - Time between the emulator checks being made (ms)
- */
-function checkBooted(platform, firstCheck, freqCheck) {
-	return new Promise((resolve, reject) => {
-		let
-			count = 0,
-			cmd = (platform === 'emulator' || platform === 'genymotion') ? 'adb -e shell getprop init.svc.bootanim' : 'adb -d shell getprop init.svc.bootanim';
-
-		output.debug(`Checking emulator status in ${firstCheck}ms`);
-		output.debug(`Checking every ${freqCheck}ms following that`);
-
-		setTimeout(() => {
-			const interval = setInterval(() => {
-				childProcess.exec(cmd, (error, stdout, stderr) => {
-					count++;
-
-					if (stdout.toString().indexOf('stopped') > -1) {
-						clearInterval(interval);
-						return resolve();
-					} else if (count >= 20) {
-						clearInterval(interval);
-						return reject('Emulator didn\'t boot in 20 sequences, assuming an issue has occured');
-					}
-
-					if (stderr) {
-						output.debug(stderr);
-					}
-
-					if (error) {
-						clearInterval(interval);
-						return reject(error);
-					} else {
-						output.debug(`${platform} still booting`);
-					}
-				});
-			}, freqCheck);
-		}, firstCheck);
-	});
 }
 
 module.exports = Device_Helper;

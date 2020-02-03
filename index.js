@@ -215,18 +215,6 @@ exports.test = async (dir, modRoot, { timeout = 60000, slow = 30000 } = {}) => {
 };
 
 /**
- * @function bootEmulator
- * @desc
- * Launch the emulator specified in the Test_Config.js for the current test
- *
- * @param {String} deviceName - The name of the AVD emulator used for testing
- * @param {String[]} args - Additional AVD arguments to boot emulator with
- * @param {int} firstCheck - Time until the first emulator check is made (ms)
- * @param {int} freqCheck - Time between the emulator checks being made (ms)
- */
-exports.bootEmulator = require('./src/device.js').launchEmu;
-
-/**
  * @function killEmulator
  * @desc
  * Kill all the Android emulators.
