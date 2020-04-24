@@ -1,6 +1,6 @@
 {
   "name": "ti-appium",
-  "version": "3.0.0-beta.3",
+  "version": "3.0.0-beta.4",
   "description": "An Appium wrapper to test Titanium applications",
   "repository": {
     "type": "git",
@@ -24,9 +24,9 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "fs-extra": "^2.0.0",
-    "ioslib": "^2.4.0",
+    "ioslib": "^3.2.5",
     "mocha": "^5.2.0",
-    "mocha-jenkins-reporter": "^0.4.1",
+    "mocha-jenkins-reporter": "^0.4.3",
     "moment-timezone": "^0.5.25",
     "node-resemble-js": "^0.2.0",
     "png-crop": "0.0.2",

@@ -120,9 +120,9 @@ exports.createAppPath = require('./src/appcelerator.js').createAppPath;
  * @param {Object} conf - Object for Appc setup
  * @param {String} conf.username - Appcelerator user to login with
  * @param {String} conf.password - Appcelerator password to authenticate
- * @param {String} conf.organisation - The org you want to lo in to
+ * @param {String} conf.organisation - The org you want to log in to
  * @param {String} conf.cli - The Appcelerator CLI version to use
- * @param {String} cinf.sdk - The SDK version or branch to build with
+ * @param {String} conf.sdk - The SDK version or branch to build with
  * @param {String} env - The environment to use (Production, PreProduction)
  * @param {Object} args - Arguments
  * @param {String[]} args.args - Additional CLI arguments to be run
@@ -229,6 +229,8 @@ exports.killEmulator = require('./src/device.js').killEmu;
  * Kill all the iOS simulators using the killall command
  */
 exports.killSimulator = require('./src/device.js').killSim;
+
+exports.getSimState = require('./src/device.js').getSimState;
 
 /**
  * @function getCert
