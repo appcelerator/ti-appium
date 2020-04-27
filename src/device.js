@@ -25,6 +25,9 @@ class Device_Helper {
 	 * @param {Int} opts.intervalWait - How long to wait between each check following the first
 	 */
 	static async killSim(simName, simVersion, { initialWait = 10000, intervalWait = 5000 } = {}) {
+		if (!simName) { throw new Error('Empty simulator name argument passed'); }
+		if (!simVersion) { throw new Error('Empty simulator version passed'); }
+
 		output.debug(`Shutting Down the iOS Simulator: ${simName} (${simVersion})`);
 
 		const udid = getUdid(simName, simVersion);
@@ -43,6 +46,9 @@ class Device_Helper {
 	 * @param {String} simVersion - The version of the iOS device to find
 	 */
 	static getSimState(simName, simVersion) {
+		if (!simName) { throw new Error('Empty simulator name argument passed'); }
+		if (!simVersion) { throw new Error('Empty simulator version passed'); }
+
 		return getState(simName, simVersion);
 	}
 
