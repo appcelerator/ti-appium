@@ -37,6 +37,9 @@ class Device_Helper {
 		childProcess.execSync(`xcrun simctl shutdown ${udid}`);
 
 		await isShutdown(simName, simVersion, initialWait, intervalWait);
+
+		// The simulator process hangs around even after the sim itself is shut down
+		childProcess.spawn('killall', [ 'Simulator' ]);
 	}
 
 	/**
