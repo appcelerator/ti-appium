@@ -43,6 +43,11 @@ class Appium_Helper {
 			capabilities.deviceReadyTimeout = 60;
 		}
 
+		// Seems to be an issue from Xcode 11.4.1, simulators won't show as visible unless the state is 'on'
+		if (!capabilities.simulatorPasteboardAutomaticSync && capabilities.platformName === 'iOS') {
+			capabilities.simulatorPasteboardAutomaticSync = 'on';
+		}
+
 		// Sets the amount of time Appium waits before shutting down in the background
 		if (!capabilities.newCommandTimeout) {
 			capabilities.newCommandTimeout = (60 * 10);
