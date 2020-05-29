@@ -429,7 +429,7 @@ sometimes focuses on new text fields.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line409">line 409</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line428">line 428</a>
     </li></ul></dd>
     
 
@@ -465,7 +465,7 @@ sometimes focuses on new text fields.
     
 
     
-    <h4 class="name" id=".elementClassName"><span class="type-signature">(static) </span>elementClassName<span class="signature">(elementType)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".elementClassName"><span class="type-signature">(static) </span>elementClassName<span class="signature">(className)</span><span class="type-signature"></span></h4>
     
 
     
@@ -473,7 +473,7 @@ sometimes focuses on new text fields.
 
 
 <div class="description">
-    Return an element, by its platform specific class name.
+    Return an element by its platform specific class name.
 </div>
 
 
@@ -509,7 +509,7 @@ sometimes focuses on new text fields.
 
         <tr>
             
-                <td class="name"><code>elementType</code></td>
+                <td class="name"><code>className</code></td>
             
 
             <td class="type">
@@ -525,9 +525,7 @@ sometimes focuses on new text fields.
 
             
 
-            <td class="description last">The general term for a UI element which
-															 will be converted to a platform specific
-															 term.</td>
+            <td class="description last">The class name of the desired element.</td>
         </tr>
 
     
@@ -612,7 +610,7 @@ sometimes focuses on new text fields.
 
 
 <div class="description">
-    Return an element, by its ID.
+    Return an element by its ID.
 </div>
 
 
@@ -705,7 +703,7 @@ sometimes focuses on new text fields.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line228">line 228</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line247">line 247</a>
     </li></ul></dd>
     
 
@@ -741,7 +739,7 @@ sometimes focuses on new text fields.
     
 
     
-    <h4 class="name" id=".elementsClassName"><span class="type-signature">(static) </span>elementsClassName<span class="signature">(elementType)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".elementsClassName"><span class="type-signature">(static) </span>elementsClassName<span class="signature">(className)</span><span class="type-signature"></span></h4>
     
 
     
@@ -749,7 +747,7 @@ sometimes focuses on new text fields.
 
 
 <div class="description">
-    Count the number of elements, by its platform specific class name.
+    Count the number of elements by its platform specific class name.
 </div>
 
 
@@ -785,7 +783,7 @@ sometimes focuses on new text fields.
 
         <tr>
             
-                <td class="name"><code>elementType</code></td>
+                <td class="name"><code>className</code></td>
             
 
             <td class="type">
@@ -801,9 +799,7 @@ sometimes focuses on new text fields.
 
             
 
-            <td class="description last">The general term for a UI element which
-															 will be converted to a platform specific
-															 term.</td>
+            <td class="description last">The class name of the desired element.</td>
         </tr>
 
     
@@ -844,7 +840,7 @@ sometimes focuses on new text fields.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line191">line 191</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line185">line 185</a>
     </li></ul></dd>
     
 
@@ -888,7 +884,7 @@ sometimes focuses on new text fields.
 
 
 <div class="description">
-    Count the number of elements, by its ID.
+    Count the number of elements by its ID.
 </div>
 
 
@@ -981,7 +977,7 @@ sometimes focuses on new text fields.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line250">line 250</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line269">line 269</a>
     </li></ul></dd>
     
 
@@ -1025,7 +1021,7 @@ sometimes focuses on new text fields.
 
 
 <div class="description">
-    Count the number of elements, by its text content.
+    Count the number of elements by its text content.
 </div>
 
 
@@ -1118,7 +1114,144 @@ sometimes focuses on new text fields.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line317">line 317</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line336">line 336</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".elementsXPath"><span class="type-signature">(static) </span>elementsXPath<span class="signature">(XPath)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Count the number of elements by its XPath.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>XPath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The XPath selector of the desired element.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line222">line 222</a>
     </li></ul></dd>
     
 
@@ -1162,7 +1295,7 @@ sometimes focuses on new text fields.
 
 
 <div class="description">
-    Return an element, by its text content.
+    Return an element by its text content.
 </div>
 
 
@@ -1255,7 +1388,144 @@ sometimes focuses on new text fields.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line295">line 295</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line314">line 314</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".elementXPath"><span class="type-signature">(static) </span>elementXPath<span class="signature">(XPath)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Return an element by its XPath.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>XPath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The XPath selector of the desired element.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line210">line 210</a>
     </li></ul></dd>
     
 
@@ -1672,7 +1942,7 @@ tests which may require it).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line771">line 771</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line790">line 790</a>
     </li></ul></dd>
     
 
@@ -1760,7 +2030,7 @@ tests which may require it).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line362">line 362</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line381">line 381</a>
     </li></ul></dd>
     
 
@@ -1848,7 +2118,7 @@ tests which may require it).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line658">line 658</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line677">line 677</a>
     </li></ul></dd>
     
 
@@ -1936,7 +2206,7 @@ tests which may require it).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line560">line 560</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line579">line 579</a>
     </li></ul></dd>
     
 
@@ -2295,7 +2565,7 @@ tests which may require it).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line631">line 631</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line650">line 650</a>
     </li></ul></dd>
     
 
@@ -2455,7 +2725,7 @@ tests which may require it).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line593">line 593</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line612">line 612</a>
     </li></ul></dd>
     
 
@@ -2615,7 +2885,7 @@ tests which may require it).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line612">line 612</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line631">line 631</a>
     </li></ul></dd>
     
 
@@ -2703,7 +2973,7 @@ tests which may require it).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line387">line 387</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line406">line 406</a>
     </li></ul></dd>
     
 
@@ -2982,7 +3252,7 @@ screenshot and validate the result against a configurable threshold.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line694">line 694</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line713">line 713</a>
     </li></ul></dd>
     
 
@@ -3070,7 +3340,7 @@ screenshot and validate the result against a configurable threshold.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line464">line 464</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line483">line 483</a>
     </li></ul></dd>
     
 
@@ -3158,7 +3428,7 @@ screenshot and validate the result against a configurable threshold.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line432">line 432</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line451">line 451</a>
     </li></ul></dd>
     
 
@@ -3246,7 +3516,7 @@ screenshot and validate the result against a configurable threshold.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line528">line 528</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line547">line 547</a>
     </li></ul></dd>
     
 
@@ -3334,7 +3604,7 @@ screenshot and validate the result against a configurable threshold.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line496">line 496</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line515">line 515</a>
     </li></ul></dd>
     
 
@@ -3370,7 +3640,7 @@ screenshot and validate the result against a configurable threshold.
     
 
     
-    <h4 class="name" id=".waitForElementClassName"><span class="type-signature">(static) </span>waitForElementClassName<span class="signature">(elementType, time)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".waitForElementClassName"><span class="type-signature">(static) </span>waitForElementClassName<span class="signature">(className, time)</span><span class="type-signature"></span></h4>
     
 
     
@@ -3378,7 +3648,7 @@ screenshot and validate the result against a configurable threshold.
 
 
 <div class="description">
-    Return an element, by its platform specific class name, but allow wait.
+    Return an element by its platform specific class name, but allow wait.
 </div>
 
 
@@ -3414,7 +3684,7 @@ screenshot and validate the result against a configurable threshold.
 
         <tr>
             
-                <td class="name"><code>elementType</code></td>
+                <td class="name"><code>className</code></td>
             
 
             <td class="type">
@@ -3430,9 +3700,7 @@ screenshot and validate the result against a configurable threshold.
 
             
 
-            <td class="description last">The general term for a UI element which
-															 will be converted to a platform specific
-															 term.</td>
+            <td class="description last">The class name of the desired element.</td>
         </tr>
 
     
@@ -3496,7 +3764,7 @@ screenshot and validate the result against a configurable threshold.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line209">line 209</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line197">line 197</a>
     </li></ul></dd>
     
 
@@ -3540,7 +3808,7 @@ screenshot and validate the result against a configurable threshold.
 
 
 <div class="description">
-    Return an element, by its ID, but allow wait.
+    Return an element by its ID, but allow wait.
 </div>
 
 
@@ -3656,7 +3924,7 @@ screenshot and validate the result against a configurable threshold.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line272">line 272</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line291">line 291</a>
     </li></ul></dd>
     
 
@@ -3700,7 +3968,7 @@ screenshot and validate the result against a configurable threshold.
 
 
 <div class="description">
-    Return an element, by its text content, but allow wait.
+    Return an element by its text content, but allow wait.
 </div>
 
 
@@ -3816,7 +4084,167 @@ screenshot and validate the result against a configurable threshold.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line339">line 339</a>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line358">line 358</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".waitForElementXPath"><span class="type-signature">(static) </span>waitForElementXPath<span class="signature">(XPath, time)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Return an element by its XPath, but allow wait.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>XPath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The XPath selector of the desired element.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>time</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">How long to wait in milliseconds.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_webdriver.js.html">src/webdriver.js</a>, <a href="src_webdriver.js.html#line234">line 234</a>
     </li></ul></dd>
     
 
@@ -3868,7 +4296,7 @@ screenshot and validate the result against a configurable threshold.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Apr 24 2020 16:29:44 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri May 29 2020 14:00:40 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>
