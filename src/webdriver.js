@@ -213,10 +213,10 @@ class WebDriver_Helper {
 		 * Return an element by its XPath.
 		 * @memberof WebDriverCommands
 		 *
-		 * @param {String} XPath - The XPath selector of the desired element.
+		 * @param {String} xPath - The XPath selector of the desired element.
 		 */
-		webdriver.addPromiseMethod('elementXPath', (className) => {
-			return driver.waitForElementByClassName(className, webdriver.asserters.isDisplayed, 1000);
+		webdriver.addPromiseMethod('elementXPath', (xPath) => {
+			return driver.waitForElementByXPath(xPath, webdriver.asserters.isDisplayed, 1000);
 		});
 
 		/**
@@ -225,10 +225,10 @@ class WebDriver_Helper {
 		 * Count the number of elements by its XPath.
 		 * @memberof WebDriverCommands
 		 *
-		 * @param {String} XPath - The XPath selector of the desired element.
+		 * @param {String} xPath - The XPath selector of the desired element.
 		 */
-		webdriver.addPromiseMethod('elementsXPath', (className) => {
-			return driver.elementsByClassName(className);
+		webdriver.addPromiseMethod('elementsXPath', (xPath) => {
+			return driver.elementsByXPath(xPath);
 		});
 
 		/**
@@ -237,11 +237,11 @@ class WebDriver_Helper {
 		 * Return an element by its XPath, but allow wait.
 		 * @memberof WebDriverCommands
 		 *
-		 * @param {String} XPath - The XPath selector of the desired element.
+		 * @param {String} xPath - The XPath selector of the desired element.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementXPath', (className, time = 3000) => {
-			return driver.waitForElementByClassName(className, webdriver.asserters.isDisplayed, time);
+		webdriver.addPromiseMethod('waitForElementXPath', (xPath, time = 3000) => {
+			return driver.waitForElementByXPath(xPath, webdriver.asserters.isDisplayed, time);
 		});
 
 		/**
