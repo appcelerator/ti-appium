@@ -74,10 +74,10 @@ class Appc_Helper {
 
 			if (ti) {
 				cmd = 'ti';
-				cmdArgs = [ 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt' ];
+				cmdArgs = [ 'sdk', 'install', '-b', appc.sdk, '--no-prompt' ];
 			} else {
 				cmd = 'appc';
-				cmdArgs = [ 'ti', 'sdk', 'install', '-b', appc.sdk, '-d', '--no-prompt', '--username', appc.username, '--password', appc.password, '-O', appc.organisation ];
+				cmdArgs = [ 'ti', 'sdk', 'install', '-b', appc.sdk, '--no-prompt', '--username', appc.username, '--password', appc.password, '-O', appc.organisation ];
 			}
 
 			// Add any user defined arguments into the command
@@ -128,23 +128,7 @@ class Appc_Helper {
 			});
 
 			prc.on('exit', code => {
-				if (code !== 0 || error === true) {
-					return reject(Error('Error installing Titanium SDK'));
-				} else {
-					try {
-						// If the SDK was already installed, the -d flag will have been ignored
-						output.debug(`Selecting the SDK '${sdk}'`);
-						if (ti) {
-							exec(`ti sdk select ${sdk}`);
-						} else {
-							exec(`appc ti sdk select ${sdk}`);
-						}
-
-						return resolve(sdk);
-					} catch (err) {
-						reject(err);
-					}
-				}
+				(code === 0 && error === false) ? resolve(sdk) : reject(Error('Error installing Titanium SDK'));
 			});
 		});
 	}
@@ -208,7 +192,7 @@ class Appc_Helper {
 	 * @param {String[]} opts.args - Any additional arguments to be passed to the command
 	 * @param {Boolean} opts.ti - Whether or not to use the titanium CLI
 	 */
-	static build(dir, platform, { args = [], ti = false } = {}) {
+	static build(dir, platform, sdk, { args = [], ti = false } = {}) {
 		return new Promise((resolve, reject) => {
 			// Validate the arguments are valid
 			if (args && !Array.isArray(args)) {
@@ -221,23 +205,13 @@ class Appc_Helper {
 			// Prepare the tiapp.xml before build
 			const
 				tiapp = require('tiapp.xml').load(tiappFile),
-				sdks = exec('ti sdk list -o json'),
-				sdk = JSON.parse(sdks).activeSDK,
 				appName = tiapp.name;
 
 			output.debug(`Building app '${appName}'`);
 			output.debug(`Setting tiapp.xml SDK to ${sdk}`);
 
-			// Write the currently selected SDK, this should have been set to the
-			// requested branch/SDK in the SDK install step
+			// Write the desired SDK to the tiapp.xml
 			tiapp.sdkVersion = sdk;
-
-			output.debug('Removing iOS SOASTA references from the tiapp.xml');
-
-			// Remove SOASTA module reference
-			tiapp.removeModule('com.soasta.touchtest', 'iphone');
-			// Remove SOASTA property reference
-			tiapp.removeProperty('com-soasta-touchtest-ios-appId');
 
 			tiapp.write();
 
