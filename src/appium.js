@@ -113,12 +113,11 @@ class Appium_Helper {
 	 * Launch an Appium server for the mobile testing, as it cannot use the
 	 * desktop session.
 	 *
-	 * @param {String} modRoot - The path to the root of the project being tested
 	 * @param {Object} opts - Optional arguments
 	 * @param {String} opts.hostname - The address of the Appium server to connect to
 	 * @param {Int} opts.port - The port of the server that the Appium server is running on
 	 */
-	static async runAppium(modRoot, { hostname = 'localhost', port = 4723 } = {}) {
+	static async runAppium({ hostname = 'localhost', port = 4723 } = {}) {
 		output.debug(`Starting Appium Server On '${hostname}:${port}'`);
 		// We only want to allow starting a server on the local machine
 		const validAddresses = [ 'localhost', '0.0.0.0', '127.0.0.1' ];
