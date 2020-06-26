@@ -4,6 +4,7 @@ const
 	path = require('path'),
 	fs = require('fs-extra'),
 	output = require('./output.js'),
+	tisdk = require('titaniumlib').sdk,
 	spawn = require('child_process').spawn,
 	exec = require('child_process').execSync;
 
@@ -44,93 +45,113 @@ class Appc_Helper {
 	}
 
 	/**
+	 * Takes in an SDK identifier and attempts to resolve it to the applicable SDK
+	 * version. Can take a release version, pre-release version, or branch
+	 * identifier and attempts to resolve it to an installable identifier.
+	 *
+	 * @param {String} sdk - The version or branch of the SDK to validate
+	 */
+	static async parseSDK(sdk) {
+		output.debug(`Parsing the validity of SDK version ${sdk}`);
+
+		const
+			sdkTestOne = new RegExp(/^\d+\.\d+\.\d+\.GA$/),
+			sdkTestTwo = new RegExp(/^\d+\.\d+\.\d+\.v\d+$/),
+			sdkTestThree = new RegExp(/^\d+_\d+_X$/);
+
+		if (sdkTestOne.test(sdk) || sdk === 'latest') {
+			// Matches the version profile for a GA release
+			output.debug('SDK version passed has been identified as type release version');
+
+			const releases = Object.keys(await tisdk.getReleases(true));
+
+			// Latest is kinda nasty to deal with as it isn't a branch or a pretty number
+			if (sdk === 'latest') { sdk = releases[releases.length - 1]; }
+
+			if (!releases.includes(sdk)) { throw new Error(`${sdk} isn't a valid release`); }
+
+			return sdk;
+		} else if (sdkTestTwo.test(sdk)) {
+			// Matches the version profile for a test release
+			output.debug('SDK version passed has been identified as type pre-release version');
+
+			const branches = (await tisdk.getBranches()).branches;
+
+			const temp = `${(sdk.split('.').slice(0, 2).join('_'))}_X`;
+
+			if (!branches.includes(temp)) {
+				output.debug(`Can't find a branch matching ${temp}, checking master and next`);
+				const
+					masterBuilds = Object.keys(await tisdk.getBuilds('master')),
+					nextBuilds = Object.keys(await tisdk.getBuilds('next'));
+
+				if (masterBuilds.includes(sdk)) {
+					output.debug(`Found SDK ${sdk} in branch master`);
+					return sdk;
+				}
+
+				if (nextBuilds.includes(sdk)) {
+					output.debug(`Found SDK ${sdk} in branch next`);
+					return sdk;
+				}
+
+				throw new Error(`Can't find SDK ${sdk} in any branches`);
+			}
+
+			const builds = Object.keys(await tisdk.getBuilds(temp));
+
+			if (!builds.includes(sdk)) { throw new Error(`SDK ${sdk} isn't a valid build within ${temp}`); }
+
+			return sdk;
+		} else if (sdkTestThree.test(sdk) || sdk === 'master' || sdk === 'next') {
+			// Matches the profile for a branch name
+			output.debug('SDK version passed has been identified as type branch');
+
+			const branches = (await tisdk.getBranches()).branches;
+
+			if (!branches.includes(sdk)) { throw new Error(`Branch ${sdk} isn't a valid branch`); }
+
+			const builds = Object.keys(await tisdk.getBuilds(sdk));
+
+			return builds[builds.length - 1];
+		} else {
+			throw new Error(`${sdk} isn't a valid Titanium release or branch`);
+		}
+	}
+
+	/**
 	 * Take the passed SDK, and attempt to install it. If it is a straight defined
 	 * SDK, then install it. Otherwise if it is a branch, get the latest version
 	 * of it.
 	 *
-	 * @param {Object} appc - The details for the Appcelerator run
-	 * @param {String} appc.sdk - The version or branch of the SDK to install
-	 * @param {String} appc.username - The username to authenticate with
-	 * @param {String} appc.password - The password to authenticate with
-	 * @param {String} appc.organisation - The relevant org ID to log in to
-	 * @param {Object} opts - Optional arguments
-	 * @param {String[]} opts.args - Any additional arguments to be passed to the command
-	 * @param {Boolean} opts.ti - Whether or not to use the titanium CLI
+	 * @param {String} sdk - The version or branch of the SDK to install
+	 * @param {Boolean} force - Whether or not to force re-install the SDK
 	 */
-	static installSDK(appc, { args = [], ti = false } = {}) {
-		output.debug(`Installing Appcelerator SDK '${appc.sdk}'`);
+	static async installSDK(sdk, force = false) {
+		// Validate that we're installing a valid SDK
+		try {
+			sdk = await this.parseSDK(sdk);
+		} catch (e) { throw (e); }
 
-		return new Promise((resolve, reject) => {
-			// Validate the arguments are valid
-			if (args && !Array.isArray(args)) {
-				return reject(Error('Arguments must be an array'));
+		output.debug(`Identified ${sdk} as version to be installed`);
+
+		const installs = await tisdk.getInstalledSDKs();
+
+		// Check if the SDK is already installed
+		for (const install of installs) {
+			if (install.name === sdk && !force) {
+				output.debug(`Found SDK ${sdk} already installed`);
+				return sdk;
 			}
+		}
 
-			let
-				sdk,
-				cmd,
-				cmdArgs,
-				error = false;
+		// Install it if pre-checks haven't returned already
+		try {
+			output.debug(`Installing SDK ${sdk} with overwrite set to ${force}`);
+			await tisdk.install({ uri: sdk, overwrite: force });
+		} catch (e) { throw e; }
 
-			if (ti) {
-				cmd = 'ti';
-				cmdArgs = [ 'sdk', 'install', '-b', appc.sdk, '--no-prompt' ];
-			} else {
-				cmd = 'appc';
-				cmdArgs = [ 'ti', 'sdk', 'install', '-b', appc.sdk, '--no-prompt', '--username', appc.username, '--password', appc.password, '-O', appc.organisation ];
-			}
-
-			// Add any user defined arguments into the command
-			if (args) {
-				cmdArgs = cmdArgs.concat(args);
-			}
-
-			let
-				foundStr,
-				installStr = /successfully installed!/;
-
-			if ((appc.sdk.split('.')).length > 1) {
-				foundStr = /is already installed!/;
-
-				output.debug('Requested SDK is a specific version, not a branch, removing \'-b\' flag');
-				// Remove the branch flag if downloading a specific SDK
-				let index = cmdArgs.indexOf(cmdArgs.find(element => element === '-b'));
-
-				cmdArgs.splice(index, 1);
-			} else {
-				foundStr = /is currently the newest version available\./;
-			}
-
-			output.debug('Beginning SDK install');
-			const prc = spawn(cmd, cmdArgs, {
-				shell: true
-			});
-
-			prc.stdout.on('data', data => {
-				output.debug(data.toString());
-				if (data.toString().match(installStr)) {
-					output.debug('Installed the requested SDK');
-					sdk = data.toString().match(/\w+\.\w+\.\w+\.\w+/)[0];
-				}
-				if (data.toString().match(foundStr)) {
-					output.debug('Found the requested SDK');
-					sdk = data.toString().match(/\w+\.\w+\.\w+\.\w+/)[0];
-				}
-			});
-
-			prc.stderr.on('data', data => {
-				output.debug(data.toString());
-				// Appc CLI doesn't provide an error code on fail, so need to monitor the output and look for issues manually
-				// If statement is there so that [WARN] flags are ignored on stderr
-				if (data.toString().includes('[ERROR]')) {
-					error = true;
-				}
-			});
-
-			prc.on('exit', code => {
-				(code === 0 && error === false) ? resolve(sdk) : reject(Error('Error installing Titanium SDK'));
-			});
-		});
+		return sdk;
 	}
 
 	/**

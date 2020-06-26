@@ -108,11 +108,22 @@ exports.buildApp = require('./src/appcelerator.js').build;
  * @desc
  * Generate a path to the built application based upon platform
  *
+ * @param {String} sdk - The version or branch of the SDK to validate
+ */
+exports.createAppPath = require('./src/appcelerator.js').createAppPath;
+
+/**
+ * @function parseSDK
+ * @desc
+ * Takes in an SDK identifier and attempts to resolve it to the applicable SDK
+ * version. Can take a release version, pre-release version, or branch
+ * identifier and attempts to resolve it to an installable identifier.
+ *
  * @param {String} dir - The path to the root of the application project
  * @param {String} platform - The relevant mobile OS
  * @param {String} appName - The name of the app to identify the app package
  */
-exports.createAppPath = require('./src/appcelerator.js').createAppPath;
+exports.parseSDK = require('./src/appcelerator.js').parseSDK;
 
 /**
  * Configure the environment with the required SDK and CLI for the Test run
@@ -123,25 +134,24 @@ exports.createAppPath = require('./src/appcelerator.js').createAppPath;
  * @param {String} conf.organisation - The org you want to log in to
  * @param {String} conf.cli - The Appcelerator CLI version to use
  * @param {String} conf.sdk - The SDK version or branch to build with
- * @param {String} env - The environment to use (Production, PreProduction)
  * @param {Object} args - Arguments
- * @param {String[]} args.args - Additional CLI arguments to be run
+ * @param {Boolean} args.force - Whether or not to force re-install the SDK
  * @param {Boolean} args.ti - Whether or not to use the titanium CLI over appc
  */
-exports.appcSetup = async (conf, env, { args = [], ti = false } = {}) => {
+exports.appcSetup = async (conf, { force = false, ti = false } = {}) => {
 	const appc = require('./src/appcelerator.js');
 
 	try {
 		let appcSDK;
 
 		if (ti) {
-			appcSDK = await appc.installSDK(conf, { args: args, ti: ti });
+			appcSDK = await appc.installSDK(conf.sdk, force);
 		} else {
-			await appc.login(conf, env);
+			await appc.login(conf, 'production');
 
 			await appc.installCLI(conf);
 
-			appcSDK = await appc.installSDK(conf, { args: args });
+			appcSDK = await appc.installSDK(conf.sdk, force);
 		}
 
 		return appcSDK;
@@ -230,6 +240,12 @@ exports.killEmulator = require('./src/device.js').killEmu;
  */
 exports.killSimulator = require('./src/device.js').killSim;
 
+/**
+ * Get the boot status of an iOS simulator via its UDID
+ *
+ * @param {String} simName - The name of the iOS device to find
+ * @param {String} simVersion - The version of the iOS device to find
+ */
 exports.getSimState = require('./src/device.js').getSimState;
 
 /**
