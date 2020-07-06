@@ -319,18 +319,22 @@ class WebDriver_Helper {
 		 *
 		 * @param {String} text - The text to identify the element
 		 */
-		webdriver.addPromiseMethod('elementText', (text) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, 1000);
+		webdriver.addPromiseMethod('elementText', async (text, { caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.waitForElementById(text, webdriver.asserters.isDisplayed, 1000);
 
-						case 'Android':
-							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, 1000);
+				case 'Android':
+					if (caseSensitive) {
+						return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, 1000);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
+
+						return driver.waitForElementByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`, webdriver.asserters.isDisplayed, 1000);
 					}
-				});
+			}
 		});
 
 		/**
@@ -341,18 +345,22 @@ class WebDriver_Helper {
 		 *
 		 * @param {String} text - The text to identify the element
 		 */
-		webdriver.addPromiseMethod('elementsText', (text) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.elementsById(text);
+		webdriver.addPromiseMethod('elementsText', async (text, { caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.elementsById(text);
 
-						case 'Android':
-							return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+				case 'Android':
+					if (caseSensitive) {
+						return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
+
+						return driver.elementsByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`);
 					}
-				});
+			}
 		});
 
 		/**
@@ -364,18 +372,22 @@ class WebDriver_Helper {
 		 * @param {String} text - The text to identify the element
 		 * @param {Int} time - How long to wait in milliseconds
 		 */
-		webdriver.addPromiseMethod('waitForElementText', (text, time = 3000) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
+		webdriver.addPromiseMethod('waitForElementText', async (text, { time = 3000, caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
 
-						case 'Android':
-							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
+				case 'Android':
+					if (caseSensitive) {
+						return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
+
+						return driver.waitForElementByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`, webdriver.asserters.isDisplayed, time);
 					}
-				});
+			}
 		});
 
 		/**

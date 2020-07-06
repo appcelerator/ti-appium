@@ -1,6 +1,6 @@
 {
   "name": "ti-appium",
-  "version": "3.0.0-beta.12",
+  "version": "3.0.0-beta.13",
   "description": "An Appium wrapper to test Titanium applications",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   "author": "Sajoha",
   "license": "ISC",
   "dependencies": {
-    "appium": "^1.17.1",
+    "appium": "^1.18.0-beta.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "fs-extra": "^2.0.0",
