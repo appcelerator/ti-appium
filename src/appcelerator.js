@@ -141,6 +141,10 @@ class Appc_Helper {
 		for (const install of installs) {
 			if (install.name === sdk && !force) {
 				output.debug(`Found SDK ${sdk} already installed`);
+
+				output.debug(`Selecting ${sdk}`);
+				exec(`ti sdk select ${sdk}`);
+
 				return sdk;
 			}
 		}
@@ -150,6 +154,9 @@ class Appc_Helper {
 			output.debug(`Installing SDK ${sdk} with overwrite set to ${force}`);
 			await tisdk.install({ uri: sdk, overwrite: force });
 		} catch (e) { throw e; }
+
+		output.debug(`Selecting ${sdk}`);
+		exec(`ti sdk select ${sdk}`);
 
 		return sdk;
 	}
