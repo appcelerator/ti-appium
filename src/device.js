@@ -2,7 +2,6 @@
 
 const
 	ps = require('ps-list'),
-	ioslib = require('ioslib'),
 	output = require('./output.js'),
 	childProcess = require('child_process');
 
@@ -86,6 +85,8 @@ class Device_Helper {
 			return undefined;
 		}
 
+		const ioslib = require('ioslib');
+
 		const
 			certs = await ioslib.certs.getCerts(),
 			subCerts = certs[type],
@@ -121,6 +122,8 @@ class Device_Helper {
 		if (process.platform !== 'darwin') {
 			return undefined;
 		}
+
+		const ioslib = require('ioslib');
 
 		const
 			profiles = await ioslib.provisioning.getProvisioningProfiles(),
