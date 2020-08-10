@@ -746,7 +746,7 @@ class WebDriver_Helper {
 				case 'iOS':
 				// Get the size of the window frame
 					const winVal = await driver
-						.elementByClassName('XCUIElementTypeApplication')
+						.elementByClassName('XCUIElementTypeWindow')
 						.getBounds();
 
 					// Create the config for PNGCrop to use
