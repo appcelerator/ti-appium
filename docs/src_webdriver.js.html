@@ -135,7 +135,7 @@ class WebDriver_Helper {
 
 						case 'Android':
 							return driver
-								.elementsText('OK')
+								.elementsText('OK', { preserve: true })
 								.then(elements => {
 									if (elements.length === 0) {
 										return driver
@@ -143,7 +143,7 @@ class WebDriver_Helper {
 											.sleep(500);
 									} else {
 										return driver
-											.elementText('OK')
+											.elementText('OK', { preserve: true })
 											.click()
 											.sleep(500);
 									}
@@ -347,18 +347,22 @@ class WebDriver_Helper {
 		 *
 		 * @param {String} text - The text to identify the element
 		 */
-		webdriver.addPromiseMethod('elementText', (text) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, 1000);
+		webdriver.addPromiseMethod('elementText', async (text, { caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.waitForElementById(text, webdriver.asserters.isDisplayed, 1000);
 
-						case 'Android':
-							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, 1000);
+				case 'Android':
+					if (caseSensitive) {
+						return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, 1000);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
+
+						return driver.waitForElementByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`, webdriver.asserters.isDisplayed, 1000);
 					}
-				});
+			}
 		});
 
 		/**
@@ -369,18 +373,22 @@ class WebDriver_Helper {
 		 *
 		 * @param {String} text - The text to identify the element
 		 */
-		webdriver.addPromiseMethod('elementsText', (text) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.elementsById(text);
+		webdriver.addPromiseMethod('elementsText', async (text, { caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.elementsById(text);
 
-						case 'Android':
-							return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+				case 'Android':
+					if (caseSensitive) {
+						return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
+
+						return driver.elementsByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`);
 					}
-				});
+			}
 		});
 
 		/**
@@ -392,18 +400,22 @@ class WebDriver_Helper {
 		 * @param {String} text - The text to identify the element
 		 * @param {Int} time - How long to wait in milliseconds
 		 */
-		webdriver.addPromiseMethod('waitForElementText', (text, time = 3000) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
+		webdriver.addPromiseMethod('waitForElementText', async (text, { time = 3000, caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
 
-						case 'Android':
-							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
+				case 'Android':
+					if (caseSensitive) {
+						return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
+
+						return driver.waitForElementByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`, webdriver.asserters.isDisplayed, time);
 					}
-				});
+			}
 		});
 
 		/**
@@ -739,6 +751,42 @@ class WebDriver_Helper {
 		});
 
 		/**
+		 * @function getDensity
+		 * @desc
+		 * Used for finding the screen density of Android devices
+		 * @memberof WebDriverCommands
+		 */
+		webdriver.addPromiseMethod('getDensity', async () => {
+			const session = await driver.sessionCapabilities();
+
+			switch (session.platformName) {
+				case 'Android':
+					switch (session.deviceScreenDensity) {
+						case 120:
+							return 0.75;
+
+						case 160:
+							return 1;
+
+						case 240:
+							return 1.5;
+
+						case 320:
+							return 2;
+
+						case 480:
+							return 3;
+
+						default:
+							return 1;
+					}
+
+				default:
+					return 1;
+			}
+		});
+
+		/**
 		 * @function screenshotTest
 		 * @desc
 		 * Take a screenshot on the device, and then compare it to a reference
@@ -762,7 +810,7 @@ class WebDriver_Helper {
 				case 'iOS':
 				// Get the size of the window frame
 					const winVal = await driver
-						.elementByClassName('XCUIElementTypeApplication')
+						.elementByClassName('XCUIElementTypeWindow')
 						.getBounds();
 
 					// Create the config for PNGCrop to use
@@ -962,7 +1010,7 @@ function compImg(testImg, reference, thresh) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Jun 26 2020 16:45:22 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Aug 28 2020 10:09:07 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

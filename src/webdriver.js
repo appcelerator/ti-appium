@@ -107,7 +107,7 @@ class WebDriver_Helper {
 
 						case 'Android':
 							return driver
-								.elementsText('OK')
+								.elementsText('OK', { preserve: true })
 								.then(elements => {
 									if (elements.length === 0) {
 										return driver
@@ -115,7 +115,7 @@ class WebDriver_Helper {
 											.sleep(500);
 									} else {
 										return driver
-											.elementText('OK')
+											.elementText('OK', { preserve: true })
 											.click()
 											.sleep(500);
 									}
@@ -684,6 +684,42 @@ class WebDriver_Helper {
 			});
 
 			messages.length.should.equal(iterations);
+		});
+
+		/**
+		 * @function getDensity
+		 * @desc
+		 * Used for finding the screen density of Android devices
+		 * @memberof WebDriverCommands
+		 */
+		webdriver.addPromiseMethod('getDensity', async () => {
+			const session = await driver.sessionCapabilities();
+
+			switch (session.platformName) {
+				case 'Android':
+					switch (session.deviceScreenDensity) {
+						case 120:
+							return 0.75;
+
+						case 160:
+							return 1;
+
+						case 240:
+							return 1.5;
+
+						case 320:
+							return 2;
+
+						case 480:
+							return 3;
+
+						default:
+							return 1;
+					}
+
+				default:
+					return 1;
+			}
 		});
 
 		/**
