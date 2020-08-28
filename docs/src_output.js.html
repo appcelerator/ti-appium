@@ -55,8 +55,6 @@ class Output_Helper {
 			message = `${message}\n`;
 		}
 
-		getPos() &amp;&amp; process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write(message);
 	}
 
@@ -101,8 +99,6 @@ class Output_Helper {
 	static info(message) {
 		message = `${Green}[INFO]${Reset} ${sanitise(message)}\n`;
 
-		getPos() &amp;&amp; process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write(message);
 	}
 
@@ -115,8 +111,6 @@ class Output_Helper {
 	static warn(message) {
 		message = `${Yellow}[WARN]${Reset} ${sanitise(message)}\n`;
 
-		getPos() &amp;&amp; process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write(message);
 	}
 
@@ -128,8 +122,6 @@ class Output_Helper {
 	static error(message) {
 		message = `${Red}[ERROR] ${sanitise(message)}${Reset}\n`;
 
-		getPos() &amp;&amp; process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write(message);
 	}
 
@@ -139,8 +131,6 @@ class Output_Helper {
 	 * @param {String} message - String to be enclosed by the banner
 	 */
 	static banner(message) {
-		getPos() &amp;&amp; process.stdout.write('\n'); // Move down a line if interrupting
-
 		process.stdout.write('\n-------------------------------------------------------\n');
 		process.stdout.write(`${Green}[INFO]${Reset} ${message}\n`);
 		process.stdout.write('-------------------------------------------------------\n');
@@ -155,8 +145,6 @@ class Output_Helper {
 		message = `${Grey}[DEBUG] ${sanitise(message)}${Reset}\n`;
 
 		if (process.env.logging === 'debug') {
-			getPos() &amp;&amp; process.stdout.write('\n'); // Move down a line if interrupting
-
 			process.stdout.write(message);
 		}
 	}
@@ -186,22 +174,6 @@ function sanitise(message) {
 	}
 }
 
-/**
- * Return a boolean based on whether or not the cursor is mid line
- * @private
- */
-function getPos() {
-	try {
-		if (require('get-cursor-position').sync().col > 1) {
-			return true;
-		} else {
-			return false;
-		}
-	} catch (e) {
-		return false;
-	}
-}
-
 module.exports = Output_Helper;
 </code></pre>
         </article>
@@ -213,13 +185,13 @@ module.exports = Output_Helper;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="WebDriverCommands.html">WebDriverCommands</a></li></ul><h3>Classes</h3><ul><li><a href="Appc_Helper.html">Appc_Helper</a></li><li><a href="Appium_Helper.html">Appium_Helper</a></li><li><a href="Device_Helper.html">Device_Helper</a></li><li><a href="Mocha_Helper.html">Mocha_Helper</a></li><li><a href="Output_Helper.html">Output_Helper</a></li><li><a href="Webdriver_Helper.html">Webdriver_Helper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appcRun">appcRun</a></li><li><a href="global.html#appcSetup">appcSetup</a></li><li><a href="global.html#banner">banner</a></li><li><a href="global.html#bootEmulator">bootEmulator</a></li><li><a href="global.html#buildApp">buildApp</a></li><li><a href="global.html#createAppPath">createAppPath</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#finish">finish</a></li><li><a href="global.html#getCert">getCert</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#killEmulator">killEmulator</a></li><li><a href="global.html#killSimulator">killSimulator</a></li><li><a href="global.html#skip">skip</a></li><li><a href="global.html#startAppium">startAppium</a></li><li><a href="global.html#startClient">startClient</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#stopAppium">stopAppium</a></li><li><a href="global.html#stopClient">stopClient</a></li><li><a href="global.html#test">test</a></li><li><a href="global.html#warn">warn</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="WebDriverCommands.html">WebDriverCommands</a></li></ul><h3>Classes</h3><ul><li><a href="Appc_Helper.html">Appc_Helper</a></li><li><a href="Appium_Helper.html">Appium_Helper</a></li><li><a href="Device_Helper.html">Device_Helper</a></li><li><a href="Mocha_Helper.html">Mocha_Helper</a></li><li><a href="Output_Helper.html">Output_Helper</a></li><li><a href="Webdriver_Helper.html">Webdriver_Helper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appcRun">appcRun</a></li><li><a href="global.html#appcSetup">appcSetup</a></li><li><a href="global.html#banner">banner</a></li><li><a href="global.html#buildApp">buildApp</a></li><li><a href="global.html#createAppPath">createAppPath</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#finish">finish</a></li><li><a href="global.html#getCert">getCert</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getSimState">getSimState</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#killEmulator">killEmulator</a></li><li><a href="global.html#killSimulator">killSimulator</a></li><li><a href="global.html#parseSDK">parseSDK</a></li><li><a href="global.html#skip">skip</a></li><li><a href="global.html#startAppium">startAppium</a></li><li><a href="global.html#startClient">startClient</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#stopAppium">stopAppium</a></li><li><a href="global.html#stopClient">stopClient</a></li><li><a href="global.html#test">test</a></li><li><a href="global.html#warn">warn</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Sep 05 2019 15:01:39 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Aug 28 2020 10:09:07 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

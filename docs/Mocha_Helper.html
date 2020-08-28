@@ -287,7 +287,7 @@ regular expression.
     
 
     
-    <h4 class="name" id=".run"><span class="type-signature">(static) </span>run<span class="signature">(testFiles, modRoot)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".run"><span class="type-signature">(static) </span>run<span class="signature">(testFiles, modRoot, opts)</span><span class="type-signature"></span></h4>
     
 
     
@@ -374,6 +374,101 @@ regular expression.
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Optional Arguments
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>timeout</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Timeout threshold for Mocha tests</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>slow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Slow threshold for Mocha tests</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -411,7 +506,7 @@ regular expression.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_mocha.js.html">src/mocha.js</a>, <a href="src_mocha.js.html#line54">line 54</a>
+        <a href="src_mocha.js.html">src/mocha.js</a>, <a href="src_mocha.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -457,13 +552,13 @@ regular expression.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="WebDriverCommands.html">WebDriverCommands</a></li></ul><h3>Classes</h3><ul><li><a href="Appc_Helper.html">Appc_Helper</a></li><li><a href="Appium_Helper.html">Appium_Helper</a></li><li><a href="Device_Helper.html">Device_Helper</a></li><li><a href="Mocha_Helper.html">Mocha_Helper</a></li><li><a href="Output_Helper.html">Output_Helper</a></li><li><a href="Webdriver_Helper.html">Webdriver_Helper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appcRun">appcRun</a></li><li><a href="global.html#appcSetup">appcSetup</a></li><li><a href="global.html#banner">banner</a></li><li><a href="global.html#bootEmulator">bootEmulator</a></li><li><a href="global.html#buildApp">buildApp</a></li><li><a href="global.html#createAppPath">createAppPath</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#finish">finish</a></li><li><a href="global.html#getCert">getCert</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#killEmulator">killEmulator</a></li><li><a href="global.html#killSimulator">killSimulator</a></li><li><a href="global.html#skip">skip</a></li><li><a href="global.html#startAppium">startAppium</a></li><li><a href="global.html#startClient">startClient</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#stopAppium">stopAppium</a></li><li><a href="global.html#stopClient">stopClient</a></li><li><a href="global.html#test">test</a></li><li><a href="global.html#warn">warn</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="WebDriverCommands.html">WebDriverCommands</a></li></ul><h3>Classes</h3><ul><li><a href="Appc_Helper.html">Appc_Helper</a></li><li><a href="Appium_Helper.html">Appium_Helper</a></li><li><a href="Device_Helper.html">Device_Helper</a></li><li><a href="Mocha_Helper.html">Mocha_Helper</a></li><li><a href="Output_Helper.html">Output_Helper</a></li><li><a href="Webdriver_Helper.html">Webdriver_Helper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appcRun">appcRun</a></li><li><a href="global.html#appcSetup">appcSetup</a></li><li><a href="global.html#banner">banner</a></li><li><a href="global.html#buildApp">buildApp</a></li><li><a href="global.html#createAppPath">createAppPath</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#finish">finish</a></li><li><a href="global.html#getCert">getCert</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getSimState">getSimState</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#killEmulator">killEmulator</a></li><li><a href="global.html#killSimulator">killSimulator</a></li><li><a href="global.html#parseSDK">parseSDK</a></li><li><a href="global.html#skip">skip</a></li><li><a href="global.html#startAppium">startAppium</a></li><li><a href="global.html#startClient">startClient</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#stopAppium">stopAppium</a></li><li><a href="global.html#stopClient">stopClient</a></li><li><a href="global.html#test">test</a></li><li><a href="global.html#warn">warn</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Sep 05 2019 15:01:39 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Aug 28 2020 10:09:07 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -78,8 +78,11 @@ class Mocha_Helper {
 	 *
 	 * @param {Array} testFiles - An array of test files for Mocha to run
 	 * @param {String} modRoot - The path to the root of the project being tested
+	 * @param {Object}  opts - Optional Arguments
+	 * @param {Int} opts.timeout  - Timeout threshold for Mocha tests
+	 * @param {Int} opts.slow - Slow threshold for Mocha tests
 	 */
-	static run(testFiles, modRoot) {
+	static run(testFiles, modRoot, { timeout = 60000, slow = 30000 } = {}) {
 		return new Promise((resolve, reject) => {
 			// Have to clear cache so that Mocha will run the same tests twice, solution taken from here https://github.com/mochajs/mocha/issues/995#issuecomment-261752316
 			Object.keys(require.cache).forEach((file) => {
@@ -105,8 +108,8 @@ class Mocha_Helper {
 			let mocha = new Mocha({
 				fullTrace: false,
 				useColors: true,
-				timeout: 180000, // Maybe this should be configurable
-				slow: 80000,
+				timeout: timeout,
+				slow: slow,
 				reporter: 'mocha-jenkins-reporter',
 				reporterOptions: {
 					junit_report_name: time,
@@ -151,14 +154,14 @@ class Mocha_Helper {
 								// Check if the ticket is already in the array
 								if (index >= 0) {
 									// Add the skip message onto the object
-									tests[index].errors.push(data.title.replace(/\\/g, '').replace(/"/g, '\''));
+									tests[index].errors.push(data.title.replace(/\\/g, '').replace(/"/g, '\'').replace(/\n/, ''));
 								} else {
 									// If a ticket object isn't already in the array, create it
 									test = {
 										state: 3,
 										name: data.title,
 										fileName: fileName,
-										errors: [ data.title.replace(/\\/g, '').replace(/"/g, '\'') ]
+										errors: [ data.title.replace(/\\/g, '').replace(/"/g, '\'').replace(/\n/, '') ]
 									};
 								}
 							} else if (data.state === 'passed') {
@@ -179,7 +182,7 @@ class Mocha_Helper {
 								}
 							} else if (data.state === 'failed') {
 								// Create a message to be attatched to the ticket
-								let failMessage = `[TEST STEP] ${data.title.replace(/"/g, '\'')}\\n[RESULT] ${data.err.message.replace(/\\/g, '').replace(/"/g, '\'')}`;
+								let failMessage = `[TEST STEP] ${data.title.replace(/"/g, '\'')}\\n[RESULT] ${data.err.message.replace(/\\/g, '').replace(/"/g, '\'').replace(/\n/, '')}`;
 								// Check if the ticket is already in the array
 								if (index >= 0) {
 									// Change the state of the test to a failure
@@ -223,13 +226,13 @@ module.exports = Mocha_Helper;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="WebDriverCommands.html">WebDriverCommands</a></li></ul><h3>Classes</h3><ul><li><a href="Appc_Helper.html">Appc_Helper</a></li><li><a href="Appium_Helper.html">Appium_Helper</a></li><li><a href="Device_Helper.html">Device_Helper</a></li><li><a href="Mocha_Helper.html">Mocha_Helper</a></li><li><a href="Output_Helper.html">Output_Helper</a></li><li><a href="Webdriver_Helper.html">Webdriver_Helper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appcRun">appcRun</a></li><li><a href="global.html#appcSetup">appcSetup</a></li><li><a href="global.html#banner">banner</a></li><li><a href="global.html#bootEmulator">bootEmulator</a></li><li><a href="global.html#buildApp">buildApp</a></li><li><a href="global.html#createAppPath">createAppPath</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#finish">finish</a></li><li><a href="global.html#getCert">getCert</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#killEmulator">killEmulator</a></li><li><a href="global.html#killSimulator">killSimulator</a></li><li><a href="global.html#skip">skip</a></li><li><a href="global.html#startAppium">startAppium</a></li><li><a href="global.html#startClient">startClient</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#stopAppium">stopAppium</a></li><li><a href="global.html#stopClient">stopClient</a></li><li><a href="global.html#test">test</a></li><li><a href="global.html#warn">warn</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="WebDriverCommands.html">WebDriverCommands</a></li></ul><h3>Classes</h3><ul><li><a href="Appc_Helper.html">Appc_Helper</a></li><li><a href="Appium_Helper.html">Appium_Helper</a></li><li><a href="Device_Helper.html">Device_Helper</a></li><li><a href="Mocha_Helper.html">Mocha_Helper</a></li><li><a href="Output_Helper.html">Output_Helper</a></li><li><a href="Webdriver_Helper.html">Webdriver_Helper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appcRun">appcRun</a></li><li><a href="global.html#appcSetup">appcSetup</a></li><li><a href="global.html#banner">banner</a></li><li><a href="global.html#buildApp">buildApp</a></li><li><a href="global.html#createAppPath">createAppPath</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#finish">finish</a></li><li><a href="global.html#getCert">getCert</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getSimState">getSimState</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#killEmulator">killEmulator</a></li><li><a href="global.html#killSimulator">killSimulator</a></li><li><a href="global.html#parseSDK">parseSDK</a></li><li><a href="global.html#skip">skip</a></li><li><a href="global.html#startAppium">startAppium</a></li><li><a href="global.html#startClient">startClient</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#stopAppium">stopAppium</a></li><li><a href="global.html#stopClient">stopClient</a></li><li><a href="global.html#test">test</a></li><li><a href="global.html#warn">warn</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Sep 05 2019 15:01:39 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Aug 28 2020 10:09:07 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -173,144 +173,81 @@ class WebDriver_Helper {
 		/**
 		 * @function elementClassName
 		 * @desc
-		 * Return an element, by its platform specific class name.
+		 * Return an element by its platform specific class name.
 		 * @memberof WebDriverCommands
 		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
+		 * @param {String} className - The class name of the desired element.
 		 */
-		webdriver.addPromiseMethod('elementClassName', elementType => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					return driver.elementByClassName(getElement(elementType, platform));
-				});
+		webdriver.addPromiseMethod('elementClassName', (className) => {
+			return driver.waitForElementByClassName(className, webdriver.asserters.isDisplayed, 1000);
 		});
 
 		/**
 		 * @function elementsClassName
 		 * @desc
-		 * Count the number of elements, by its platform specific class name.
+		 * Count the number of elements by its platform specific class name.
 		 * @memberof WebDriverCommands
 		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
+		 * @param {String} className - The class name of the desired element.
 		 */
-		webdriver.addPromiseMethod('elementsClassName', elementType => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					return driver.elementsByClassName(getElement(elementType, platform));
-				});
+		webdriver.addPromiseMethod('elementsClassName', (className) => {
+			return driver.elementsByClassName(className);
 		});
 
 		/**
 		 * @function waitForElementClassName
 		 * @desc
-		 * Return an element, by its platform specific class name, but allow wait.
+		 * Return an element by its platform specific class name, but allow wait.
 		 * @memberof WebDriverCommands
 		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
+		 * @param {String} className - The class name of the desired element.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementClassName', (elementType, time) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					return driver.waitForElementByClassName(getElement(elementType, platform), webdriver.asserters.isDisplayed, time);
-				});
+		webdriver.addPromiseMethod('waitForElementClassName', (className, time = 3000) => {
+			return driver.waitForElementByClassName(className, webdriver.asserters.isDisplayed, time);
 		});
 
 		/**
 		 * @function elementXPath
 		 * @desc
-		 * Return an element, by its platform specific XPath.
+		 * Return an element by its XPath.
 		 * @memberof WebDriverCommands
-		 * @deprecated
 		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
+		 * @param {String} xPath - The XPath selector of the desired element.
 		 */
-		webdriver.addPromiseMethod('elementXPath', (elementType, id, position) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.elementByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`);
-
-						case 'Android':
-							return driver.elementByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`);
-					}
-				});
+		webdriver.addPromiseMethod('elementXPath', (xPath) => {
+			return driver.waitForElementByXPath(xPath, webdriver.asserters.isDisplayed, 1000);
 		});
 
 		/**
 		 * @function elementsXPath
 		 * @desc
-		 * Count the number of elements, by its platform specific XPath.
+		 * Count the number of elements by its XPath.
 		 * @memberof WebDriverCommands
-		 * @deprecated
 		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
+		 * @param {String} xPath - The XPath selector of the desired element.
 		 */
-		webdriver.addPromiseMethod('elementsXPath', (elementType, id, position) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.elementsByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`);
-
-						case 'Android':
-							return driver.elementsByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`);
-					}
-				});
+		webdriver.addPromiseMethod('elementsXPath', (xPath) => {
+			return driver.elementsByXPath(xPath);
 		});
 
 		/**
 		 * @function waitForElementXPath
 		 * @desc
-		 * Return an element, by its platform specific XPath, but allow wait.
+		 * Return an element by its XPath, but allow wait.
 		 * @memberof WebDriverCommands
-		 * @deprecated
 		 *
-		 * @param {String} elementType - The general term for a UI element which
-		 *															 will be converted to a platform specific
-		 *															 term.
-		 * @param {String} id - The ID used by the XPath element description.
-		 * @param {Int} position - The position in the array of matching XPath items.
+		 * @param {String} xPath - The XPath selector of the desired element.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementXPath', (elementType, id, position, time) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					switch (platform) {
-						case 'iOS':
-							return driver.waitForElementByXPath(`(//${getElement(elementType, platform)}[@name="${id}"])[${position}]`, webdriver.asserters.isDisplayed, time);
-
-						case 'Android':
-							return driver.waitForElementByXPath(`(//${getElement(elementType, platform)}[@content-desc="${id}."])[${position}]`, webdriver.asserters.isDisplayed, time);
-					}
-				});
+		webdriver.addPromiseMethod('waitForElementXPath', (xPath, time = 3000) => {
+			return driver.waitForElementByXPath(xPath, webdriver.asserters.isDisplayed, time);
 		});
 
 		/**
 		 * @function elementId
 		 * @desc
-		 * Return an element, by its ID.
+		 * Return an element by its ID.
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} element - The element ID used to identify the element.
@@ -321,10 +258,10 @@ class WebDriver_Helper {
 				.then(platform => {
 					switch (platform) {
 						case 'iOS':
-							return driver.elementById(element);
+							return driver.waitForElementById(element, webdriver.asserters.isDisplayed, 1000);
 
 						case 'Android':
-							return driver.elementByAccessibilityId(`${element}.`);
+							return driver.waitForElementByAccessibilityId(element, webdriver.asserters.isDisplayed, 1000);
 					}
 				});
 		});
@@ -332,7 +269,7 @@ class WebDriver_Helper {
 		/**
 		 * @function elementsId
 		 * @desc
-		 * Count the number of elements, by its ID.
+		 * Count the number of elements by its ID.
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} element - The element ID used to identify the element.
@@ -346,7 +283,7 @@ class WebDriver_Helper {
 							return driver.elementsById(element);
 
 						case 'Android':
-							return driver.elementsByAccessibilityId(`${element}.`);
+							return driver.elementsByAccessibilityId(element);
 					}
 				});
 		});
@@ -354,13 +291,13 @@ class WebDriver_Helper {
 		/**
 		 * @function waitForElementId
 		 * @desc
-		 * Return an element, by its ID, but allow wait.
+		 * Return an element by its ID, but allow wait.
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} element - The element ID used to identify the element.
 		 * @param {Int} time - How long to wait in milliseconds.
 		 */
-		webdriver.addPromiseMethod('waitForElementId', (element, time) => {
+		webdriver.addPromiseMethod('waitForElementId', (element, time = 3000) => {
 			return driver
 				.getPlatform()
 				.then(platform => {
@@ -369,7 +306,7 @@ class WebDriver_Helper {
 							return driver.waitForElementById(element, webdriver.asserters.isDisplayed, time);
 
 						case 'Android':
-							return driver.waitForElementByAccessibilityId(`${element}.`, webdriver.asserters.isDisplayed, time);
+							return driver.waitForElementByAccessibilityId(element, webdriver.asserters.isDisplayed, time);
 					}
 				});
 		});
@@ -377,137 +314,80 @@ class WebDriver_Helper {
 		/**
 		 * @function elementText
 		 * @desc
-		 * Return an element, by its text content.
+		 * Return an element by its text content.
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
 		 */
-		webdriver.addPromiseMethod('elementText', (text, { preserve = false } = {}) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.elementById(text);
+		webdriver.addPromiseMethod('elementText', async (text, { caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.waitForElementById(text, webdriver.asserters.isDisplayed, 1000);
 
-						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
+				case 'Android':
+					if (caseSensitive) {
+						return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, 1000);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
 
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
-							return driver.elementByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+						return driver.waitForElementByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`, webdriver.asserters.isDisplayed, 1000);
 					}
-				});
+			}
 		});
 
 		/**
 		 * @function elementsText
 		 * @desc
-		 * Count the number of elements, by its text content.
+		 * Count the number of elements by its text content.
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
 		 */
-		webdriver.addPromiseMethod('elementsText', (text, { preserve = false } = {}) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.elementsById(text);
+		webdriver.addPromiseMethod('elementsText', async (text, { caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.elementsById(text);
 
-						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
+				case 'Android':
+					if (caseSensitive) {
+						return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
 
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
-							return driver.elementsByAndroidUIAutomator(`new UiSelector().text("${text}")`);
+						return driver.elementsByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`);
 					}
-				});
+			}
 		});
 
 		/**
 		 * @function waitForElementText
 		 * @desc
-		 * Return an element, by its text content, but allow wait.
+		 * Return an element by its text content, but allow wait.
 		 * @memberof WebDriverCommands
 		 *
 		 * @param {String} text - The text to identify the element
-		 * @param {Object} opts - Optional arguments
-		 * @param {Boolean} opts.preserve - Whether text should be corrected on Android
-		 * @param {Int} opts.time - How long to wait in milliseconds
+		 * @param {Int} time - How long to wait in milliseconds
 		 */
-		webdriver.addPromiseMethod('waitForElementText', (text, { preserve = false, time = 1000 } = {}) => {
-			return driver
-				.sessions()
-				.then(sessions => {
-					switch (sessions[0].capabilities.platformName) {
-						case 'iOS':
-							return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
+		webdriver.addPromiseMethod('waitForElementText', async (text, { time = 3000, caseSensitive = false } = {}) => {
+			switch (await driver.getPlatform()) {
+				case 'iOS':
+					return driver.waitForElementById(text, webdriver.asserters.isDisplayed, time);
 
-						case 'Android':
-							function titleCase(str) {
-								return str.replace(
-									/\w\S*/g,
-									function (txt) {
-										return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-									}
-								);
-							}
+				case 'Android':
+					if (caseSensitive) {
+						return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
+					} else {
+						const
+							upperCase = text.toUpperCase(text),
+							lowerCase = text.toLowerCase(text);
 
-							// Get the Android platform version from the Appium session
-							let version = parseFloat(sessions[0].capabilities.platformVersion).toFixed(2);
-
-							// Alter the string depending on the Android version
-							if (version >= 7.0) {
-								if (!preserve) {
-									text = text.toUpperCase();
-								}
-							} else if (!preserve) {
-								text = titleCase(text);
-							}
-
-							return driver.waitForElementByAndroidUIAutomator(`new UiSelector().text("${text}")`, webdriver.asserters.isDisplayed, time);
+						return driver.waitForElementByXPath(`//*[@text="${text}" or @text="${upperCase}" or @text="${lowerCase}"]`, webdriver.asserters.isDisplayed, time);
 					}
-				});
+			}
 		});
 
 		/**
@@ -547,8 +427,8 @@ class WebDriver_Helper {
 				.then(bounds => {
 					const action = new webdriver.TouchAction()
 						.press({
-							x: (bounds.x + (bounds.width / 2)),
-							y: (bounds.y + (bounds.height / 2))
+							x: (bounds.x + (bounds.width / 2)).toFixed(0),
+							y: (bounds.y + (bounds.height / 2)).toFixed(0)
 						})
 						.wait(3000)
 						.release();
@@ -569,8 +449,8 @@ class WebDriver_Helper {
 				.then(bounds => {
 					const action = new webdriver.TouchAction()
 						.press({
-							x: (bounds.x + (bounds.width / 2)),
-							y: (bounds.y + (bounds.height / 2))
+							x: (bounds.x + (bounds.width / 2)).toFixed(0),
+							y: (bounds.y + (bounds.height / 2)).toFixed(0)
 						})
 						.release();
 
@@ -600,12 +480,12 @@ class WebDriver_Helper {
 					await driver.performTouchAction(
 						new webdriver.TouchAction()
 							.press({
-								x: (bounds.x + (bounds.width / 2)),
-								y: (bounds.y + 1)
+								x: (bounds.x + (bounds.width / 2)).toFixed(0),
+								y: (bounds.y + 1).toFixed(0)
 							})
 							.moveTo({
-								x: (bounds.x + (bounds.width / 2)),
-								y: (bounds.y + (bounds.height - 1))
+								x: (bounds.x + (bounds.width / 2)).toFixed(0),
+								y: (bounds.y + (bounds.height - 1)).toFixed(0)
 							})
 							.release());
 					break;
@@ -632,12 +512,12 @@ class WebDriver_Helper {
 					await driver.performTouchAction(
 						new webdriver.TouchAction()
 							.press({
-								x: (bounds.x + (bounds.width / 2)),
-								y: (bounds.y + (bounds.height - 1))
+								x: (bounds.x + (bounds.width / 2)).toFixed(0),
+								y: (bounds.y + (bounds.height - 1)).toFixed(0)
 							})
 							.moveTo({
-								x: (bounds.x + (bounds.width / 2)),
-								y: (bounds.y + 1)
+								x: (bounds.x + (bounds.width / 2)).toFixed(0),
+								y: (bounds.y + 1).toFixed(0)
 							})
 							.release());
 					break;
@@ -664,12 +544,12 @@ class WebDriver_Helper {
 					await driver.performTouchAction(
 						new webdriver.TouchAction()
 							.press({
-								x: (bounds.x + 1),
-								y: (bounds.y + (bounds.height / 2))
+								x: (bounds.x + 1).toFixed(0),
+								y: (bounds.y + (bounds.height / 2)).toFixed(0)
 							})
 							.moveTo({
-								x: (bounds.x + (bounds.width - 1)),
-								y: (bounds.y + (bounds.height / 2))
+								x: (bounds.x + (bounds.width - 1)).toFixed(0),
+								y: (bounds.y + (bounds.height / 2)).toFixed(0)
 							})
 							.release());
 					break;
@@ -696,12 +576,12 @@ class WebDriver_Helper {
 					await driver.performTouchAction(
 						new webdriver.TouchAction()
 							.press({
-								x: (bounds.x + (bounds.width - 1)),
-								y: (bounds.y + (bounds.height / 2))
+								x: (bounds.x + (bounds.width - 1)).toFixed(0),
+								y: (bounds.y + (bounds.height / 2)).toFixed(0)
 							})
 							.moveTo({
-								x: (bounds.x + 1),
-								y: (bounds.y + (bounds.height / 2))
+								x: (bounds.x + 1).toFixed(0),
+								y: (bounds.y + (bounds.height / 2)).toFixed(0)
 							})
 							.release());
 					break;
@@ -807,134 +687,39 @@ class WebDriver_Helper {
 		});
 
 		/**
-		 * @function shouldLog
+		 * @function getDensity
 		 * @desc
-		 * Check that a message appears in the device log. (DEPRECATED)
+		 * Used for finding the screen density of Android devices
 		 * @memberof WebDriverCommands
-		 * @deprecated
-		 *
-		 * @param {String[]} searchStrings - Strings that should be present in the log
 		 */
-		webdriver.addPromiseMethod('shouldLog', searchStrings => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					let logType;
+		webdriver.addPromiseMethod('getDensity', async () => {
+			const session = await driver.sessionCapabilities();
 
-					if (platform === 'iOS') {
-						logType = 'syslog';
-					}
-					if (platform === 'Android') {
-						logType = 'logcat';
-					}
+			switch (session.platformName) {
+				case 'Android':
+					switch (session.deviceScreenDensity) {
+						case 120:
+							return 0.75;
 
-					return driver
-						.sleep(1000)
-						.log(logType)
-						.then(log => {
-							let messages = [];
+						case 160:
+							return 1;
 
-							// Capture only the messages from the log
-							log.forEach(item => messages.push(item.message));
+						case 240:
+							return 1.5;
 
-							searchStrings.forEach(searchString => {
-								const
-									formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
-									expression = new RegExp(formatted);
+						case 320:
+							return 2;
 
-								messages.should.include.match(expression);
-							});
-						});
-				});
-		});
+						case 480:
+							return 3;
 
-		/**
-		 * @function shouldNotLog
-		 * @desc
-		 * Check that a message doesn't appear in the device log. (DEPRECATED)
-		 * @memberof WebDriverCommands
-		 * @deprecated
-		 *
-		 * @param {String[]} searchStrings - Strings that shouldn't be present in the log
-		 */
-		webdriver.addPromiseMethod('shouldNotLog', searchStrings => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					let logType;
-
-					if (platform === 'iOS') {
-						logType = 'syslog';
-					}
-					if (platform === 'Android') {
-						logType = 'logcat';
+						default:
+							return 1;
 					}
 
-					return driver
-						.sleep(500)
-						.log(logType)
-						.then(log => {
-							let messages = [];
-
-							// Capture only the messages from the log
-							log.forEach(item => messages.push(item.message));
-
-							searchStrings.forEach(searchString => {
-								const
-									formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
-									expression = new RegExp(formatted);
-
-								messages.should.not.include.match(expression);
-							});
-						});
-				});
-		});
-
-		/**
-		 * @function countLog
-		 * @desc
-		 * Count the amount of times a message appears in a log. (DEPRECATED)
-		 * @memberof WebDriverCommands
-		 * @deprecated
-		 *
-		 * @param {String[]} searchStrings - Strings that should be present in the log
-		 * @param {Int} iterations - The amount of times the string should be present
-		 */
-		webdriver.addPromiseMethod('countLog', (searchStrings, iterations) => {
-			return driver
-				.getPlatform()
-				.then(platform => {
-					let logType;
-
-					if (platform === 'iOS') {
-						logType = 'syslog';
-					}
-					if (platform === 'Android') {
-						logType = 'logcat';
-					}
-
-					return driver
-						.sleep(500)
-						.log(logType)
-						.then(log => {
-							let messages = [];
-
-							// Capture only the messages from the log
-							log.forEach(item => {
-								searchStrings.forEach(searchString => {
-									const
-										formatted = searchString.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, '\\$&'),
-										expression = new RegExp(formatted);
-
-									if (item.message.match(expression)) {
-										messages.push(item.message);
-									}
-								});
-							});
-
-							messages.length.should.equal(iterations);
-						});
-				});
+				default:
+					return 1;
+			}
 		});
 
 		/**
@@ -997,7 +782,7 @@ class WebDriver_Helper {
 				case 'iOS':
 				// Get the size of the window frame
 					const winVal = await driver
-						.elementByClassName('XCUIElementTypeApplication')
+						.elementByClassName('XCUIElementTypeWindow')
 						.getBounds();
 
 					// Create the config for PNGCrop to use
@@ -1106,6 +891,8 @@ async function processImg(file, modRoot, screenshot, thresh, overwrite, dimensio
 			throw e;
 		}
 	} else {
+		if (!fs.existsSync(file)) { throw new Error(`Reference screenshot "${path.basename(file)}" doesn't exist`); }
+
 		const elem = path.parse(screenshotPath);
 
 		screenshotPath = path.format({
@@ -1178,123 +965,4 @@ function compImg(testImg, reference, thresh) {
 			}
 		});
 	});
-}
-
-/**
- * Generate a dynamic element identifier, based on the mobile OS, and the type
- * of element.
- * @private
- *
- * @param {String} elementType - The type of UI element to identify
- * @param {String} platform - The mobile OS to identify the element for
- */
-function getElement(elementType, platform) {
-	switch (platform) {
-		case 'iOS':
-			switch (elementType) {
-				case 'TextField':
-					return 'XCUIElementTypeTextField';
-
-				case 'TextArea':
-					return 'XCUIElementTypeTextView';
-
-				case 'TableView':
-					return 'XCUIElementTypeTable';
-
-				case 'Button':
-					return 'XCUIElementTypeButton';
-
-				case 'TableViewRow':
-					return 'XCUIElementTypeCell';
-
-				case 'OptionDialog':
-					return 'XCUIElementTypeSheet';
-
-				case 'SearchField':
-					return 'XCUIElementTypeSearchField';
-
-				case 'DatePicker':
-					return 'XCUIElementTypeDatePicker';
-
-				case 'Window':
-					return 'XCUIElementTypeWindow';
-
-				case 'WebView':
-					return 'XCUIElementTypeWebView';
-
-				case 'ImageView':
-					return 'XCUIElementTypeImage';
-
-				case 'StatusBar':
-					return 'XCUIElementTypeStatusBar';
-
-				case 'KeyBoard':
-					return 'XCUIElementTypeKeyboard';
-
-				case 'ToolBar':
-					return 'XCUIElementTypeToolbar';
-
-				case 'PagingControl':
-					return 'XCUIElementTypePageIndicator';
-
-				case 'Slider':
-					return 'XCUIElementTypeSlider';
-
-				case 'Switch':
-					return 'XCUIElementTypeSwitch';
-
-				case 'ScrollView':
-					return 'XCUIElementTypeScrollView';
-
-				case 'Other':
-					return 'XCUIElementTypeOther';
-			}
-			break;
-
-		case 'Android':
-			switch (elementType) {
-				case 'TextField':
-					return 'android.widget.TextView';
-
-				case 'TextArea':
-					return 'android.widget.EditText';
-
-				case 'DatePicker':
-					return 'android.widget.DatePicker';
-
-				case 'SearchField':
-					return 'android.widget.EditText';
-
-				case 'TableView':
-					return 'android.widget.ListView';
-
-				case 'Window':
-					return 'android.view.ViewGroup';
-
-				case 'TableViewRow':
-					return 'android.view.ViewGroup';
-
-				case 'WebView':
-					return 'android.webkit.WebView';
-
-				case 'ImageView':
-					return 'android.widget.ImageView';
-
-				case 'StatusBar':
-					return 'android.view.View'; // Could be any number of views, needs to be more specific
-
-				case 'Slider':
-					return 'android.widget.SeekBar';
-
-				case 'Switch':
-					return 'android.widget.Switch';
-
-				case 'ScrollView':
-					return 'android.widget.ScrollView';
-
-				case 'Other':
-					return 'android.view.ViewGroup';
-			}
-			break;
-	}
 }

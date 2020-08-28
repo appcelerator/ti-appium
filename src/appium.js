@@ -20,62 +20,68 @@ class Appium_Helper {
 	 *
 	 * @param {Object} capabilities - Desired capabilities for Appium to run with
 	 */
-	static startClient(capabilities) {
-		return new Promise(async (resolve, reject) => {
-			output.debug('Starting WebDriver Instance');
+	static async startClient(capabilities) {
+		output.debug('Starting WebDriver Instance');
 
-			if (!capabilities.automationName) {
-				switch (capabilities.platformName) {
-					case 'iOS':
-						capabilities.automationName = 'XCUITest';
-						break;
+		if (!capabilities.automationName) {
+			switch (capabilities.platformName) {
+				case 'iOS':
+					capabilities.automationName = 'XCUITest';
+					break;
 
-					case 'Android':
-						capabilities.automationName = 'UiAutomator2';
-						break;
+				case 'Android':
+					capabilities.automationName = 'UiAutomator2';
+					break;
 
-					default:
-						capabilities.automationName = 'Appium';
-						break;
-				}
+				default:
+					capabilities.automationName = 'Appium';
+					break;
 			}
+		}
 
-			if (!capabilities.deviceReadyTimeout && capabilities.platformName === 'Android') {
-				capabilities.deviceReadyTimeout = 60;
-			}
+		if (!capabilities.deviceReadyTimeout && capabilities.platformName === 'Android') {
+			capabilities.deviceReadyTimeout = 60;
+		}
 
-			// Sets the amount of time Appium waits before shutting down in the background
-			if (!capabilities.newCommandTimeout) {
-				capabilities.newCommandTimeout = (60 * 10);
-			}
+		// Seems to be an issue from Xcode 11.4.1, simulators won't show as visible unless the state is 'on'
+		if (!capabilities.simulatorPasteboardAutomaticSync && capabilities.platformName === 'iOS') {
+			capabilities.simulatorPasteboardAutomaticSync = 'on';
+		}
 
-			// Enabling chai assertion style: https://www.npmjs.com/package/chai-as-promised#node
-			chai.use(chaiAsPromised);
-			chai.should();
+		// Sets the amount of time Appium waits before shutting down in the background
+		if (!capabilities.newCommandTimeout) {
+			capabilities.newCommandTimeout = (60 * 10);
+		}
 
-			// Enables chai assertion chaining
-			chaiAsPromised.transferPromiseness = wd.transferPromiseness;
+		// Enabling chai assertion style: https://www.npmjs.com/package/chai-as-promised#node
+		chai.use(chaiAsPromised);
+		chai.should();
 
-			// Establish the testing driver
-			let driver = wd.promiseChainRemote({ host: this.host, port: this.port });
+		// Enables chai assertion chaining
+		chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
-			// Make sure to include the custom commands defined in the WebDriver Helper
-			webdriver.loadDriverCommands(driver, wd);
+		// Establish the testing driver
+		let driver = wd.promiseChainRemote({ host: 'localhost', port: 4723 });
 
-			global.driver = driver;
-			global.webdriver = wd;
+		// Make sure to include the custom commands defined in the WebDriver Helper
+		webdriver.loadDriverCommands(driver, wd);
 
-			driver.init(capabilities, err => {
-				(err) ? reject(err) : resolve();
-			});
-		});
+		global.driver = driver;
+		global.webdriver = wd;
+
+		await driver.init(capabilities);
+
+		// Janky fix to patch an issue with syslog not reporting on iOS tests
+		await driver.resetApp();
 	}
 
 	/**
 	 * Stops the WD session, but first it closes and removes the app from the
 	 * device in an attempt to save storage space.
+	 *
+	 * @param {Boolean} softStop - Whether or not to remove the app on stopping
 	 */
-	static async stopClient() {
+	static async stopClient(softStop = false) {
 		output.debug('Stopping WebDriver Instance');
 
 		const driver = global.driver;
@@ -88,15 +94,18 @@ class Appium_Helper {
 			output.debug('Closing the application');
 			await driver.closeApp();
 
-			if (platform === 'Android' || platform === 'iOS') {
-				output.debug('Removing the app from device');
-				await driver.removeApp((platform === 'iOS') ? capabilities.CFBundleIdentifier : capabilities.desired.appPackage);
+			if (!softStop) {
+				if (platform === 'Android' || platform === 'iOS') {
+					output.debug('Removing the app from device');
+					await driver.removeApp((platform === 'iOS') ? capabilities.CFBundleIdentifier : capabilities.desired.appPackage);
+				}
 			}
 
 			output.debug('Exiting the WebDriver session');
 			await driver.quit();
 
 			delete global.driver;
+			delete global.webdriver;
 		}
 	}
 
@@ -104,18 +113,17 @@ class Appium_Helper {
 	 * Launch an Appium server for the mobile testing, as it cannot use the
 	 * desktop session.
 	 *
-	 * @param {String} modRoot - The path to the root of the project being tested
 	 * @param {Object} opts - Optional arguments
 	 * @param {String} opts.hostname - The address of the Appium server to connect to
 	 * @param {Int} opts.port - The port of the server that the Appium server is running on
 	 */
-	static async runAppium(modRoot, { hostname = 'localhost', port = 4723 } = {}) {
+	static async runAppium({ hostname = 'localhost', port = 4723 } = {}) {
 		output.debug(`Starting Appium Server On '${hostname}:${port}'`);
 		// We only want to allow starting a server on the local machine
 		const validAddresses = [ 'localhost', '0.0.0.0', '127.0.0.1' ];
 
 		if (validAddresses.includes(hostname)) {
-			this.server = await appium.main({ host: hostname, port: port, loglevel: 'false', defaultCapabilities: { showIOSLog: true } });
+			this.server = await appium.main({ host: hostname, port: port, loglevel: 'false' });
 			this.host = hostname;
 			this.port = port;
 		} else {

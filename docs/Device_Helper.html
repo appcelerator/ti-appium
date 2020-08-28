@@ -95,7 +95,7 @@ and provisioning profiles.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line10">line 10</a>
+        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line8">line 8</a>
     </li></ul></dd>
     
 
@@ -276,7 +276,7 @@ return the certificate object.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line138">line 138</a>
+        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line83">line 83</a>
     </li></ul></dd>
     
 
@@ -437,7 +437,167 @@ then return the provisioning profile object.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line174">line 174</a>
+        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line121">line 121</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".getSimState"><span class="type-signature">(static) </span>getSimState<span class="signature">(simName, simVersion)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get the boot status of an iOS simulator via its UDID
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>simName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of the iOS device to find</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>simVersion</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The version of the iOS device to find</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line50">line 50</a>
     </li></ul></dd>
     
 
@@ -574,7 +734,7 @@ then return the provisioning profile object.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line117">line 117</a>
+        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -610,7 +770,7 @@ then return the provisioning profile object.
     
 
     
-    <h4 class="name" id=".killSim"><span class="type-signature">(static) </span>killSim<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".killSim"><span class="type-signature">(async, static) </span>killSim<span class="signature">(simName, simVersion, opts)</span><span class="type-signature"></span></h4>
     
 
     
@@ -618,95 +778,8 @@ then return the provisioning profile object.
 
 
 <div class="description">
-    Kill all the iOS simulators using the killall command
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line98">line 98</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".launchEmu"><span class="type-signature">(async, static) </span>launchEmu<span class="signature">(deviceName, opts)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Launch the emulator specified in the Test_Config.js for the current test
+    Kill the iOS simulator using it's UDID, and then repeatedly check whether
+it has fully shut down
 </div>
 
 
@@ -742,7 +815,7 @@ then return the provisioning profile object.
 
         <tr>
             
-                <td class="name"><code>deviceName</code></td>
+                <td class="name"><code>simName</code></td>
             
 
             <td class="type">
@@ -758,7 +831,30 @@ then return the provisioning profile object.
 
             
 
-            <td class="description last">The name of the AVD emulator used for testing</td>
+            <td class="description last">The name of the iOS device to find</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>simVersion</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The version of the iOS device to find</td>
         </tr>
 
     
@@ -781,7 +877,7 @@ then return the provisioning profile object.
 
             
 
-            <td class="description last">Optional Arguments
+            <td class="description last">Optional arguments
                 <h6>Properties</h6>
                 
 
@@ -807,13 +903,13 @@ then return the provisioning profile object.
 
         <tr>
             
-                <td class="name"><code>args</code></td>
+                <td class="name"><code>initialWait</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;String></span>
+<span class="param-type">Int</span>
 
 
             
@@ -823,20 +919,20 @@ then return the provisioning profile object.
 
             
 
-            <td class="description last">Additional AVD arguments to boot emulator with</td>
+            <td class="description last">How long to wait for the first boot check</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>firstCheck</code></td>
+                <td class="name"><code>intervalWait</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">int</span>
+<span class="param-type">Int</span>
 
 
             
@@ -846,30 +942,7 @@ then return the provisioning profile object.
 
             
 
-            <td class="description last">Time until the first emulator check is made (ms)</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>freqCheck</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Time between the emulator checks being made (ms)</td>
+            <td class="description last">How long to wait between each check following the first</td>
         </tr>
 
     
@@ -917,146 +990,7 @@ then return the provisioning profile object.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line27">line 27</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".launchGeny"><span class="type-signature">(async, static) </span>launchGeny<span class="signature">(deviceName)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Launch a Genymotion device to run tests on. The name is retrieved from the
-Test_Config.js file
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>deviceName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The name of the Genymotion emulator used for
-													 		testing</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line73">line 73</a>
+        <a href="src_device.js.html">src/device.js</a>, <a href="src_device.js.html#line26">line 26</a>
     </li></ul></dd>
     
 
@@ -1102,13 +1036,13 @@ Test_Config.js file
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="WebDriverCommands.html">WebDriverCommands</a></li></ul><h3>Classes</h3><ul><li><a href="Appc_Helper.html">Appc_Helper</a></li><li><a href="Appium_Helper.html">Appium_Helper</a></li><li><a href="Device_Helper.html">Device_Helper</a></li><li><a href="Mocha_Helper.html">Mocha_Helper</a></li><li><a href="Output_Helper.html">Output_Helper</a></li><li><a href="Webdriver_Helper.html">Webdriver_Helper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appcRun">appcRun</a></li><li><a href="global.html#appcSetup">appcSetup</a></li><li><a href="global.html#banner">banner</a></li><li><a href="global.html#bootEmulator">bootEmulator</a></li><li><a href="global.html#buildApp">buildApp</a></li><li><a href="global.html#createAppPath">createAppPath</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#finish">finish</a></li><li><a href="global.html#getCert">getCert</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#killEmulator">killEmulator</a></li><li><a href="global.html#killSimulator">killSimulator</a></li><li><a href="global.html#skip">skip</a></li><li><a href="global.html#startAppium">startAppium</a></li><li><a href="global.html#startClient">startClient</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#stopAppium">stopAppium</a></li><li><a href="global.html#stopClient">stopClient</a></li><li><a href="global.html#test">test</a></li><li><a href="global.html#warn">warn</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="WebDriverCommands.html">WebDriverCommands</a></li></ul><h3>Classes</h3><ul><li><a href="Appc_Helper.html">Appc_Helper</a></li><li><a href="Appium_Helper.html">Appium_Helper</a></li><li><a href="Device_Helper.html">Device_Helper</a></li><li><a href="Mocha_Helper.html">Mocha_Helper</a></li><li><a href="Output_Helper.html">Output_Helper</a></li><li><a href="Webdriver_Helper.html">Webdriver_Helper</a></li></ul><h3>Global</h3><ul><li><a href="global.html#appcRun">appcRun</a></li><li><a href="global.html#appcSetup">appcSetup</a></li><li><a href="global.html#banner">banner</a></li><li><a href="global.html#buildApp">buildApp</a></li><li><a href="global.html#createAppPath">createAppPath</a></li><li><a href="global.html#debug">debug</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#finish">finish</a></li><li><a href="global.html#getCert">getCert</a></li><li><a href="global.html#getProfile">getProfile</a></li><li><a href="global.html#getSimState">getSimState</a></li><li><a href="global.html#info">info</a></li><li><a href="global.html#killEmulator">killEmulator</a></li><li><a href="global.html#killSimulator">killSimulator</a></li><li><a href="global.html#parseSDK">parseSDK</a></li><li><a href="global.html#skip">skip</a></li><li><a href="global.html#startAppium">startAppium</a></li><li><a href="global.html#startClient">startClient</a></li><li><a href="global.html#step">step</a></li><li><a href="global.html#stopAppium">stopAppium</a></li><li><a href="global.html#stopClient">stopClient</a></li><li><a href="global.html#test">test</a></li><li><a href="global.html#warn">warn</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Thu Sep 05 2019 15:01:39 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Fri Aug 28 2020 10:09:07 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,9 +1,7 @@
 'use strict';
 
 const
-	path = require('path'),
 	ps = require('ps-list'),
-	ioslib = require('ioslib'),
 	output = require('./output.js'),
 	childProcess = require('child_process');
 
@@ -16,97 +14,44 @@ const
  */
 class Device_Helper {
 	/**
-	 * Launch the emulator specified in the Test_Config.js for the current test
+	 * Kill the iOS simulator using it's UDID, and then repeatedly check whether
+	 * it has fully shut down
 	 *
-	 * @param {String} deviceName - The name of the AVD emulator used for testing
-	 * @param {Object} opts - Optional Arguments
-	 * @param {String[]} opts.args - Additional AVD arguments to boot emulator with
-	 * @param {int} opts.firstCheck - Time until the first emulator check is made (ms)
-	 * @param {int} opts.freqCheck - Time between the emulator checks being made (ms)
+	 * @param {String} simName - The name of the iOS device to find
+	 * @param {String} simVersion - The version of the iOS device to find
+	 * @param {Object} opts - Optional arguments
+	 * @param {Int} opts.initialWait - How long to wait for the first boot check
+	 * @param {Int} opts.intervalWait - How long to wait between each check following the first
 	 */
-	static async launchEmu(deviceName, { args = [], firstCheck = 10000, freqCheck = 2000 } = {}) {
-		// Validate the arguments are valid
-		if (!Array.isArray(args)) {
-			throw (new Error('Arguments must be an array'));
-		}
+	static async killSim(simName, simVersion, { initialWait = 10000, intervalWait = 5000 } = {}) {
+		if (!simName) { throw new Error('Empty simulator name argument passed'); }
+		if (!simVersion) { throw new Error('Empty simulator version passed'); }
 
-		if (!Number.isInteger(firstCheck) || firstCheck < 0) {
-			throw (new Error('firstCheck must be a positive integer'));
-		}
+		output.debug(`Shutting Down the iOS Simulator: ${simName} (${simVersion})`);
 
-		if (!Number.isInteger(freqCheck) || freqCheck < 0) {
-			throw (new Error('freqCheck must be a positive integer'));
-		}
+		const udid = getUdid(simName, simVersion);
 
-		try {
-			output.debug('Checking if emulator is already booted');
+		output.debug(`Found UDID for Simulator: ${udid}`);
 
-			await getAndroidPID(deviceName);
-		} catch (err) {
-			// Assume this is just down to no booted emulator
+		childProcess.execSync(`xcrun simctl shutdown ${udid}`);
 
-			output.debug(`Can't find a running instance, launching Android emulator '${deviceName}'`);
+		await isShutdown(simName, simVersion, initialWait, intervalWait);
 
-			let
-				cmd = path.join(process.env.ANDROID_HOME, 'emulator', 'emulator'),
-				cmdArgs = [ '-avd', deviceName, '-wipe-data' ];
-
-			if (args) {
-				cmdArgs = cmdArgs.concat(args);
-			}
-
-			childProcess.spawn(cmd, cmdArgs);
-
-			await checkBooted('emulator', firstCheck, freqCheck);
-		}
-
-		output.debug(`${deviceName} is booted`);
+		// The simulator process hangs around even after the sim itself is shut down
+		childProcess.spawn('killall', [ 'Simulator' ]);
 	}
 
 	/**
-	 * Launch a Genymotion device to run tests on. The name is retrieved from the
-	 * Test_Config.js file
+	 * Get the boot status of an iOS simulator via its UDID
 	 *
-	 * @param {String} deviceName - The name of the Genymotion emulator used for
-	 *													 		testing
+	 * @param {String} simName - The name of the iOS device to find
+	 * @param {String} simVersion - The version of the iOS device to find
 	 */
-	static async launchGeny(deviceName) {
-		try {
-			output.debug('Checking if Genymotion emulator is already booted');
+	static getSimState(simName, simVersion) {
+		if (!simName) { throw new Error('Empty simulator name argument passed'); }
+		if (!simVersion) { throw new Error('Empty simulator version passed'); }
 
-			await getAndroidPID(deviceName);
-		} catch (err) {
-			// Assume this is just down to no booted emulator
-
-			output.debug(`Can't find a running instance, booting Genymotion emulator '${deviceName}'`);
-
-			const
-				cmd = (process.platform === 'darwin') ? path.join('/', 'Applications', 'Genymotion.app', 'Contents', 'MacOS', 'player.app', 'Contents', 'MacOS', 'player') : path.join(), // TODO: Find Windows path to player
-				args = [ '--vm-name', deviceName ];
-
-			childProcess.spawn(cmd, args, { shell: true });
-
-			await checkBooted('genymotion', 10000, 3000);
-		}
-
-		output.debug(`${deviceName} is booted`);
-	}
-
-	/**
-	 * Kill all the iOS simulators using the killall command
-	 */
-	static killSim() {
-		return new Promise(resolve => {
-			output.debug('Shutting Down the iOS Simulator');
-
-			childProcess.execSync('xcrun simctl shutdown booted');
-
-			// Whilst the above does kill the simulator, it can leave processes running, so just nuke it after a period for safe shutdown
-			setTimeout(() => {
-				childProcess.spawn('killall', [ 'Simulator' ]);
-				resolve();
-			}, 5000);
-		});
+		return getState(simName, simVersion);
 	}
 
 	/**
@@ -139,6 +84,8 @@ class Device_Helper {
 		if (process.platform !== 'darwin') {
 			return undefined;
 		}
+
+		const ioslib = require('ioslib');
 
 		const
 			certs = await ioslib.certs.getCerts(),
@@ -176,6 +123,8 @@ class Device_Helper {
 			return undefined;
 		}
 
+		const ioslib = require('ioslib');
+
 		const
 			profiles = await ioslib.provisioning.getProvisioningProfiles(),
 			subProfiles = profiles[type],
@@ -202,6 +151,100 @@ class Device_Helper {
 }
 
 /**
+ * Use the status of the simulator to determine whether the device is shutdown. The
+ * initial wait value is used because a simulator will sometimes show as shutdown
+ * before it really is and then change it's mind back to booted. So we use a long
+ * wait to allow it to get past this phase
+ * @private
+ *
+ * @param {String} simName - The name of the iOS device to find
+ * @param {String} simVersion - The version of the iOS device to find
+ * @param {Int} initialWait - How long to wait for the first boot check
+ * @param {Int} intervalWait - How long to wait between each check following the first
+ */
+function isShutdown(simName, simVersion, initialWait, intervalWait) {
+	return new Promise((resolve, reject) => {
+		output.debug(`Starting Check for Simulator Shutdown, Waiting ${initialWait}ms for First Check Then Every ${intervalWait}ms`);
+		setTimeout(() => {
+			let count = 0;
+
+			const interval = setInterval(() => {
+				let state = getState(simName, simVersion);
+
+				count++;
+
+				output.debug(`${simName} (${simVersion}) is Currently ${state}`);
+
+				if (state === 'Shutdown') {
+					clearInterval(interval);
+					return resolve();
+				} else if (count >= 20) {
+					clearInterval(interval);
+					return reject('iOS simulator didn\'t shutdown in expected time, you may expierience instability');
+				}
+			}, intervalWait);
+		}, initialWait);
+	});
+}
+
+/**
+ * Get the boot status of an iOS simulator via its UDID
+ * @private
+ *
+ * @param {String} simName - The name of the iOS device to find
+ * @param {String} simVersion - The version of the iOS device to find
+ */
+function getState(simName, simVersion) {
+	const
+		versionParts = simVersion.split('.'),
+		major = versionParts[0],
+		minor = versionParts[1];
+
+	const udid = getUdid(simName, simVersion);
+
+	const xcrunOut = childProcess.execSync('xcrun simctl list --json');
+
+	const xcrunSims = JSON.parse(xcrunOut).devices[`com.apple.CoreSimulator.SimRuntime.iOS-${major}-${minor}`];
+
+	try {
+		for (const xcrunSim of xcrunSims) {
+			if (xcrunSim.udid === udid) {
+				return xcrunSim.state;
+			}
+		}
+	} catch (e) {
+		throw new Error(`An issue occured trying to get the boot status of iOS simulator "${simName} (${simVersion})", do you have this simulator configured?`);
+	}
+
+	throw new Error(`Cannot retrieve a status for simulator ${simName} (${simVersion})`);
+}
+
+/**
+ * Get the UDID of an iOS simulator using the Titanium CLI
+ * @private
+ *
+ * @param {String} simName - The name of the iOS device to find
+ * @param {String} simVersion - The version of the iOS device to find
+ */
+function getUdid(simName, simVersion) {
+	const tiOut = childProcess.execSync('ti info -t ios -o json');
+
+	const tiSims = JSON.parse(tiOut).ios.simulators.ios[simVersion];
+
+	try {
+		for (const tiSim of tiSims) {
+			if (tiSim.name === simName) {
+				return tiSim.udid;
+			}
+		}
+	} catch (e) {
+		throw new Error(`An issue occured trying to find the UDID of iOS simulator "${simName} (${simVersion})", do you have this simulator configured?`);
+	}
+
+	throw new Error(`Cannot find a UDID for simulator ${simName} (${simVersion})`);
+}
+
+/**
  * Search the running processes on the system, and look for one with the
  * Android device name that we booted for testing.
  * @private
@@ -210,61 +253,22 @@ class Device_Helper {
  */
 async function getAndroidPID(deviceName) {
 	try {
-		const
-			list = await ps(),
-			proc = list.find(x => x.cmd.includes(deviceName)),
+		const list = await ps();
+
+		let pid;
+
+		if (process.platform === 'win32') {
+			const proc = list.find(x => x.name.includes('qemu-system-x86_64'));
 			pid = proc.pid;
+		} else {
+			const proc = list.find(x => x.cmd.includes(deviceName));
+			pid = proc.pid;
+		}
 
 		return pid;
 	} catch (err) {
 		throw Error(`Cannot find an Android PID for ${deviceName}`);
 	}
-}
-
-/**
- * Validate to see if there is a process running for this emulator.
- * @private
- *
- * @param {String} platform - Device we need, supports emulator or genymotion
- * @param {int} firstCheck - Time until the first emulator check is made (ms)
- * @param {int} freqCheck - Time between the emulator checks being made (ms)
- */
-function checkBooted(platform, firstCheck, freqCheck) {
-	return new Promise((resolve, reject) => {
-		let
-			count = 0,
-			cmd = (platform === 'emulator' || platform === 'genymotion') ? 'adb -e shell getprop init.svc.bootanim' : 'adb -d shell getprop init.svc.bootanim';
-
-		output.debug(`Checking emulator status in ${firstCheck}ms`);
-		output.debug(`Checking every ${freqCheck}ms following that`);
-
-		setTimeout(() => {
-			const interval = setInterval(() => {
-				childProcess.exec(cmd, (error, stdout, stderr) => {
-					count++;
-
-					if (stdout.toString().indexOf('stopped') > -1) {
-						clearInterval(interval);
-						return resolve();
-					} else if (count >= 20) {
-						clearInterval(interval);
-						return reject('Emulator didn\'t boot in 20 sequences, assuming an issue has occured');
-					}
-
-					if (stderr) {
-						output.debug(stderr);
-					}
-
-					if (error) {
-						clearInterval(interval);
-						return reject(error);
-					} else {
-						output.debug(`${platform} still booting`);
-					}
-				});
-			}, freqCheck);
-		}, firstCheck);
-	});
 }
 
 module.exports = Device_Helper;
