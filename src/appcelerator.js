@@ -315,7 +315,9 @@ class Appc_Helper {
 				}
 
 			case 'android':
-				const sdk = require('tiapp.xml').load(path.join(dir, 'tiapp.xml')).sdkVersion;
+				let sdk = require('tiapp.xml').load(path.join(dir, 'tiapp.xml')).sdkVersion;
+
+				sdk = sdk.split('.');
 
 				if (sdk[0] >= 9) {
 					return path.join(dir, 'build', 'android', 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk');
