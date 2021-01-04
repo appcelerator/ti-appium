@@ -9,7 +9,8 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint --config axway/env-node .",
-    "docs": "jsdoc . ./src -d ./docs/"
+    "docs": "jsdoc . ./src -d ./docs/",
+    "test": "npm run lint"
   },
   "keywords": [
     "Appium",
