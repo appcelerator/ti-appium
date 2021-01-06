@@ -803,7 +803,7 @@ class WebDriver_Helper {
 				case 'Android':
 
 					const capabilities = await driver.sessionCapabilities();
-					const decorName = `${capabilities.appPackage}:id/decor_content_parent`
+					const decorName = `${capabilities.appPackage}:id/decor_content_parent`;
 
 					const elements = await driver.elementsById(decorName);
 
