@@ -801,12 +801,16 @@ class WebDriver_Helper {
 					}
 
 				case 'Android':
-					const elements = await driver.elementsById('decor_content_parent');
+
+					const capabilities = await driver.sessionCapabilities();
+					const decorName = `${capabilities.appPackage}:id/decor_content_parent`
+
+					const elements = await driver.elementsById(decorName);
 
 					if (elements.length > 0) {
 						// Get the size of the window frame
 						const bounds = await driver
-							.elementById('decor_content_parent')
+							.elementById(decorName)
 							.getBounds();
 
 						// Create the config for PNGCrop to use
